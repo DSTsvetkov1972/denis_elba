@@ -17,7 +17,8 @@ def get_all_goods():
         url = f"https://elba-api.kontur.ru/v1/organizations/{COMPANY_ID}/products/search?"
         headers = {
             "X-Kontur-ApiKey": API_KEY,
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            'Connection': 'close'
             }
         dfs = []
         
@@ -61,7 +62,8 @@ def get_all_contractors():
 
         headers = {
             "X-Kontur-ApiKey": API_KEY,
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            'Connection': 'close'
             }
         dfs = []
         
@@ -84,6 +86,9 @@ def get_all_contractors():
 
             response = session.post(url, headers=headers, json=payload)
             
+            if response.status_code != 200:
+                print(response.status_code)
+            
             df = pd.DataFrame(response.json()['contractors'])
             dfs.append(df)
             bar.next()
@@ -105,7 +110,8 @@ def create_invoice(payload):
     url = f"https://elba-api.kontur.ru/v1/organizations/{COMPANY_ID}/delivery-notes?"
     headers = {
         "X-Kontur-ApiKey": API_KEY,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        'Connection': 'close'
         }
     
     payload = payload

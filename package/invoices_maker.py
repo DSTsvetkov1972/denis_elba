@@ -27,7 +27,7 @@ def invoices_maker():
 
             if row_cells_values[3] == 'Закрытие партии/чека':
                 invoice_number += 1
-                print(f'{invoice_number} из {invoice_qty}. Создаём накладную {payload['number']}')
+                print(f'{invoice_number} из {invoice_qty}. Создаём накладную для партии {product_batch}')
                 # pprint(payload)
                 create_invoice(payload)
                 warehouseItems = []
@@ -43,16 +43,20 @@ def invoices_maker():
                 
                 warehouseItems.append(warehouseItem)
                 
+                product_batch = row_cells_values[13]
+                
                 payload = {
                     "request": {},
                     "bankAccountId": BANK_ACCOUNT_ID,
                     "contractorId": row_cells_values[18],
                     "consigneeId": row_cells_values[18],      
-                    "number": row_cells_values[13],
+                    "number": product_batch,
+                    "number": None,
                     "warehouseItems": warehouseItems,
                     "date": datetime.strptime(row_cells_values[2], "%d.%m.%Y %H:%M:%S").strftime("%Y-%m-%d")
                 }
         
+                
         return (True, 'Накладные успешно созданы')       
                 
                 
