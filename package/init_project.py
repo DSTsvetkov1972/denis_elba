@@ -6,8 +6,10 @@ init()
 print(Style.BRIGHT)
 print(logo_colored)
 
-if os.path.exists('Исходник'):
-    print(Fore.GREEN, 'Папка Исходник существует', Fore.RESET)
-else:
+if not os.path.exists('Исходник'):
     os.mkdir('Исходник')
     print(Fore.GREEN, 'Создана папка Исходник', Fore.RESET)
+    
+if not os.path.exists('Архив'):
+    os.mkdir('Архив')
+    print(Fore.GREEN, 'Создана папка Архив', Fore.RESET)    
