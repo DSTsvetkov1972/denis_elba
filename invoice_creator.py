@@ -16,11 +16,18 @@ if datetime.now()>datetime(2026, 6, 7):
 while True:
 
     try:
+        n = 60
+        print(Fore.BLUE + '-'*n + Fore.RESET)
+
         print(Fore.WHITE + '1' + Fore.BLUE + ' - подготовить файл для создания накладных' + Fore.RESET)
         print(Fore.WHITE + '2' + Fore.BLUE + ' - создать накладные' + Fore.RESET)
-        print(Fore.WHITE + '3' + Fore.BLUE + ' - отправить файл в архив' + Fore.RESET) 
+        print(Fore.WHITE + '3' + Fore.BLUE + ' - отправить файл в архив' + Fore.RESET)
+
+        print(Fore.BLUE + '-'*n + Fore.RESET)
+
         print(Fore.WHITE + '4' + Fore.BLUE + ' - посмотреть контрагентов' + Fore.RESET)
-        print(Fore.WHITE + '5' + Fore.BLUE + ' - посмотреть номенлатуру' + Fore.RESET)               
+        print(Fore.WHITE + '5' + Fore.BLUE + ' - посмотреть номенклатуру' + Fore.RESET)
+        print(Fore.WHITE + '6' + Fore.BLUE + ' - обновить базу данных контрагентов и номенклатуры' + Fore.RESET)               
 
         print(Fore.MAGENTA + "Ваш выбор: " + Fore.RESET, end='')
         choise = input()
@@ -50,24 +57,7 @@ while True:
                 print(Fore.RESET+'Файл "Для накладных.xlsx" должен быть закрыт\n'+Fore.RESET)
                 continue
             
-            all_contractors_df = get_all_contractors()
-            
-            if all_contractors_df[0]:
-                df_to_sqlite(all_contractors_df[1], 'contractors')
-                all_contractors_df[1].to_excel('Контрагенты.xlsx', index=None)
-            else:
-                print(Fore.RED+f'\n{all_contractors_df[1]}\n'+Fore.RESET)
-                continue
-                       
-            all_goods_df = get_all_goods()
-            
-            if all_goods_df[0]:
-                df_to_sqlite(all_goods_df[1], 'goods')
-                all_goods_df[1].to_excel('Номенклатура.xlsx', index=None)
-            else:
-                print(Fore.RED+f'\n{all_goods_df[1]}\n'+Fore.RESET)
-                continue
-            
+           
             download_file_preparator_res = download_file_preparator(source_file_name)
             if download_file_preparator_res[0]:
                 print(Fore.GREEN+f'{download_file_preparator_res[1]}\n'+Fore.RESET)
@@ -100,8 +90,26 @@ while True:
             
         elif choise == '5':
             print(Fore.YELLOW + 'Открываем номенклатуру...' + Fore.RESET)
-            os.startfile('Номенклатура.xlsx')     
-    
+            os.startfile('Номенклатура.xlsx')
+
+        elif choise == '6':
+            print(Fore.YELLOW + 'Обновляем базу данных контрагентов и номенклатуры...' + Fore.RESET)
+
+            all_contractors_df = get_all_contractors()
+
+            if all_contractors_df[0]:
+                df_to_sqlite(all_contractors_df[1], 'contractors')
+            else:
+                print(Fore.RED+f'\n{all_contractors_df[1]}\n'+Fore.RESET)
+
+                        
+            all_goods_df = get_all_goods()
+
+            if all_goods_df[0]:
+                df_to_sqlite(all_goods_df[1], 'goods')
+            else:
+                print(Fore.RED+f'\n{all_goods_df[1]}\n'+Fore.RESET) 
+        
 
     except Exception as e:
         print(Fore.RED, str(e), Fore.RESET)

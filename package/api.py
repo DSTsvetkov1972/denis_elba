@@ -1,5 +1,5 @@
 
-import os, sys
+import os, sys, shutil
 sys.path.append(os.getcwd())
 
 import requests
@@ -7,13 +7,36 @@ import pandas as pd
 from colorama import init, Fore
 from package.config import API_KEY, COMPANY_ID, BANK_ACCOUNT_ID
 from progress.bar import FillingSquaresBar
-from pprint import pprint
-# --- НАСТРОЙКИ (замените на свои данные) ---
+from openpyxl import load_workbook
+from openpyxl.utils import get_column_letter
+from openpyxl.styles import Font
+
 session = requests.Session()
 session.keep_alive = False  # отключаем постоянные соединени
 # ConnectionError(ProtocolError('Connection aborted.', ConnectionResetError(10054, 'Удаленный хост принудительно разорвал существующее подключение', None, 10054, None)))
+
+
+def excel_formater(excel_file_path, column_widths):
+    wb = load_workbook(excel_file_path)
+    ws = wb.active
+
+    ws.freeze_panes = 'A2'
+
+    for n, column_width in enumerate(column_widths, 1):
+        ws.column_dimensions[get_column_letter(n)].width = column_width
+        ws.cell(row=1, column=n).font = Font(bold=True)
+
+    wb.save(excel_file_path)
+
+
+
+
+
 def get_all_goods():
     try:
+        if os.path.exists(os.path.join(os.getcwd(), 'Номенклатура.xlsx')):
+            os.remove(os.path.join(os.getcwd(), 'Номенклатура.xlsx'))
+
         url = f"https://elba-api.kontur.ru/v1/organizations/{COMPANY_ID}/products/search?"
         headers = {
             "X-Kontur-ApiKey": API_KEY,
@@ -49,6 +72,14 @@ def get_all_goods():
             
         goods_df = pd.concat(dfs, ignore_index=True)
         goods_df.drop_duplicates(inplace=True)
+        goods_df = goods_df.sort_values('productMainName')
+
+        goods_df.to_excel(os.path.join(os.getcwd(), 'Номенклатура.xlsx'), index=None)
+
+        excel_formater(
+            os.path.join(os.getcwd(), 'Номенклатура.xlsx'),
+            [38, 32, 8]
+        )
         
         return (True, goods_df)
     
@@ -58,6 +89,9 @@ def get_all_goods():
 def get_all_contractors():
     
     try:
+        if os.path.exists(os.path.join(os.getcwd(), 'Контрагенты.xlsx')):
+            os.remove(os.path.join(os.getcwd(), 'Контрагенты.xlsx'))
+
         url = f"https://elba-api.kontur.ru/v1/organizations/{COMPANY_ID}/contractors/search?"
 
         headers = {
@@ -97,6 +131,14 @@ def get_all_contractors():
             
         goods_df = pd.concat(dfs, ignore_index=True)
         goods_df.drop_duplicates(inplace=True)
+        goods_df = goods_df.sort_values('name')
+
+        goods_df.to_excel(os.path.join(os.getcwd(), 'Контрагенты.xlsx'), index=None)
+
+        excel_formater(
+            os.path.join(os.getcwd(), 'Контрагенты.xlsx'),
+            [38, 42, 24, 12, 12, 42]
+        )
         
         return (True, goods_df)
     
@@ -142,3 +184,6 @@ if __name__ == '__main__':
  
     create_invoice(payload)    
     
+
+if __name__ == '__main__':
+    print(get_all_goods())
