@@ -93,7 +93,7 @@ while True:
             os.startfile('Номенклатура.xlsx')
 
         elif choise == '6':
-            print(Fore.YELLOW + 'Обновляем базу данных контрагентов и номенклатуры...' + Fore.RESET)
+            print(Fore.YELLOW + 'Обновляем базу данных контрагентов...' + Fore.RESET)
 
             all_contractors_df = get_all_contractors()
 
@@ -102,7 +102,9 @@ while True:
             else:
                 print(Fore.RED+f'\n{all_contractors_df[1]}\n'+Fore.RESET)
 
-                        
+        elif choise == '7':
+            print(Fore.YELLOW + 'Обновляем базу данных номенклатуры...' + Fore.RESET)
+
             all_goods_df = get_all_goods()
 
             if all_goods_df[0]:
