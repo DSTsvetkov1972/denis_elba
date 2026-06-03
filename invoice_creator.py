@@ -27,7 +27,8 @@ while True:
 
         print(Fore.WHITE + '4' + Fore.BLUE + ' - посмотреть контрагентов' + Fore.RESET)
         print(Fore.WHITE + '5' + Fore.BLUE + ' - посмотреть номенклатуру' + Fore.RESET)
-        print(Fore.WHITE + '6' + Fore.BLUE + ' - обновить базу данных контрагентов и номенклатуры' + Fore.RESET)               
+        print(Fore.WHITE + '6' + Fore.BLUE + ' - обновить базу данных контрагентов' + Fore.RESET)
+        print(Fore.WHITE + '7' + Fore.BLUE + ' - обновить базу данных номенклатуры' + Fore.RESET)     
 
         print(Fore.MAGENTA + "Ваш выбор: " + Fore.RESET, end='')
         choise = input()

@@ -18,7 +18,7 @@ def get_product(article):
 def get_contractor_id(name, operation):
     try:
         if operation in ['Закрытие смены', 'Аварийное закрытие партии']:
-            return(False, operation)
+            return(True, operation)
         
         with sqlite3.connect(os.path.join(os.getcwd(), 'app.db')) as conn:
             sql_res = pd.read_sql_query(f"SELECT * FROM contractors WHERE name='{name}'", conn)
