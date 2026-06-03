@@ -47,7 +47,7 @@ while True:
             
             if os.path.exists('~$Контрагенты.xlsx'):
                 os.startfile('Контрагенты.xlsx')
-                print(Fore.RESET+'Файл "Контрагенты.xlsx" должен быть закрыт\n'+Fore.RESET)
+                print(Fore.RED+'Файл "Контрагенты.xlsx" должен быть закрыт\n'+Fore.RESET)
                 continue
             if os.path.exists('~$Номенклатура.xlsx'):
                 os.startfile('Номенклатура.xlsx')
@@ -55,7 +55,7 @@ while True:
                 continue
             if os.path.exists('~$Для накладных.xlsx'):
                 os.startfile('Для накладных.xlsx')
-                print(Fore.RESET+'Файл "Для накладных.xlsx" должен быть закрыт\n'+Fore.RESET)
+                print(Fore.RED+'Файл "Для накладных.xlsx" должен быть закрыт\n'+Fore.RESET)
                 continue
             
            
@@ -78,7 +78,37 @@ while True:
                 print(Fore.RED+f'{invoices_maker_res[1]}\n'+Fore.RESET)
             
         elif choise == '3':
-            print(Fore.YELLOW + 'Переместить в архив...' + Fore.RESET)
+            print(Fore.YELLOW + 'Перемещаем в архив...' + Fore.RESET)
+
+            source_file_names = list(os.walk(os.path.join(os.getcwd(), 'Исходник')))[0][2]
+
+            if len(source_file_names)==1:
+                source_file_name = source_file_names[0]
+
+                source_file_path = os.path.join(os.getcwd(), 'Исходник', source_file_name)
+                opened_source_file_path = os.path.join(os.getcwd(), 'Исходник', f'~${source_file_name}')
+
+                if os.path.exists(opened_source_file_path):
+                    os.startfile(source_file_path)
+                    print(Fore.RED+f'Файл "{source_file_name}" должен быть закрыт\n'+Fore.RESET)
+                    continue
+            elif len(source_file_names)>1:
+                print(Fore.RED+f'Папка "Исходник" содержит несколько файлов: "{source_file_names}"\n'+Fore.RESET)
+                continue
+            else:
+                print(Fore.RED+f'Папка "Исходник" не содержит файлов!\n'+Fore.RESET)
+                continue
+
+        
+            if not os.path.exists('Для накладных.xlsx'):
+                print(Fore.RED+'Файл "Номенклатура.xlsx" не существует\n'+Fore.RESET)
+                continue
+            if os.path.exists('~$Для накладных.xlsx'):
+                os.startfile('Для накладных.xlsx')
+                print(Fore.RESET+'Файл "Для накладных.xlsx" должен быть закрыт\n'+Fore.RESET)
+                continue
+
+
             confirm_res = confirm()
             if confirm_res[0]:
                 print(Fore.GREEN+f'{confirm_res[1]}\n'+Fore.RESET)

@@ -8,11 +8,23 @@ from package.api import create_invoice
 
 from datetime import datetime
 
-    
-    
-    
+def negative_weights_detector():
+        
+        wb= load_workbook(os.path.join(os.getcwd(), 'Для накладных.xlsx'))
+        ws = wb.active
+
+        for row_number in range(4, ws.max_row-1):
+            row_cells = ws[row_number]
+            row_values = [cell.value for cell in row_cells] 
+
+            if '-' in str(row_values[6]):
+                raise ValueError('Столбец G "Масса нетто" содержит отрицательные значения!')
+
+
 def invoices_maker():
     try:
+        negative_weights_detector()
+        
         wb= load_workbook(os.path.join(os.getcwd(), 'Для накладных.xlsx'))
         ws = wb.active
         warehouseItems = []
@@ -64,4 +76,5 @@ def invoices_maker():
         return (False, repr(e))
 
 if __name__ == '__main__':
-    invoices_maker()
+    # invoices_maker()
+    negative_weights_detector()

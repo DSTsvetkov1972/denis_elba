@@ -34,9 +34,9 @@ def get_light_hex():
     return f"{r:02x}{g:02x}{b:02x}"    
 
 def download_file_preparator(source_file_name):
-    #try:
-        
-    if 1:
+    
+    try: 
+    #if 1:
         invoices_qty = 0
         if os.path.exists(os.path.join(os.getcwd(), 'Для накладных.xlsx')):
             os.remove(os.path.join(os.getcwd(), 'Для накладных.xlsx'))
@@ -145,10 +145,10 @@ def download_file_preparator(source_file_name):
             invoices_qty_cell.value = invoices_qty
             
             wb.save('Для накладных.xlsx')
-            return (True, 'Файл "Для накладных.xlsx" подготовлен. Ошибок нет.')
+            return (True, 'Файл "Для накладных.xlsx" подготовлен. Ассортимент и контрагенты сопоставлены успешно.')
     
-    #except Exception as e:
-    #    return(False, f"download_file_preparator {repr(e)}")
+    except Exception as e:
+        return(False, f"download_file_preparator {repr(e)}")
 
     
 if __name__ == '__main__':
