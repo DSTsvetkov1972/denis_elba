@@ -105,7 +105,7 @@ while True:
                 continue
             if os.path.exists('~$Для накладных.xlsx'):
                 os.startfile('Для накладных.xlsx')
-                print(Fore.RESET+'Файл "Для накладных.xlsx" должен быть закрыт\n'+Fore.RESET)
+                print(Fore.RED+'Файл "Для накладных.xlsx" должен быть закрыт\n'+Fore.RESET)
                 continue
 
 
