@@ -24,7 +24,7 @@ def confirm():
             source_file_path,
             os.path.join(os.getcwd(), 'Архив', f"{archive_datetime}_{source_file_name}"))
         
-        return (True, f'Файлы "Для накладной.xlsx" и {archive_file_name} перемещены в архив')
+        return (True, f'Файлы "Для накладной.xlsx" и "{source_file_name}" перемещены в архив')
     except Exception as e:
         return (False, repr(e))
     
