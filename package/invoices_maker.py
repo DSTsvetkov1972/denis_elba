@@ -63,11 +63,9 @@ def invoices_maker():
                     "contractorId": row_cells_values[18],
                     "consigneeId": row_cells_values[18],      
                     "number": product_batch,
-                    "number": None,
                     "warehouseItems": warehouseItems,
                     "date": datetime.strptime(row_cells_values[2], "%d.%m.%Y %H:%M:%S").strftime("%Y-%m-%d")
                 }
-        
                 
         return (True, 'Накладные успешно созданы')       
                 
