@@ -8,10 +8,10 @@ from package.invoices_maker import invoices_maker
 from package.confirm_download import confirm
 import os
 
-if datetime.now()>datetime(2026, 6, 10):
-    print(Fore.RED, 'Что-то пошло не так...', Fore.RESET)
-    while True:
-        continue
+#if datetime.now()>datetime(2026, 6, 10):
+#    print(Fore.RED, 'Что-то пошло не так...', Fore.RESET)
+#    while True:
+#        continue
         
 while True:
 
