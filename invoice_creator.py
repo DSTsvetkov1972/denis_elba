@@ -27,6 +27,9 @@ while True:
 
         print(Fore.WHITE + '4' + Fore.BLUE + ' - посмотреть контрагентов' + Fore.RESET)
         print(Fore.WHITE + '5' + Fore.BLUE + ' - посмотреть номенклатуру' + Fore.RESET)
+        
+        print(Fore.BLUE + '-'*n + Fore.RESET)        
+        
         print(Fore.WHITE + '6' + Fore.BLUE + ' - обновить базу данных контрагентов' + Fore.RESET)
         print(Fore.WHITE + '7' + Fore.BLUE + ' - обновить базу данных номенклатуры' + Fore.RESET)     
 
