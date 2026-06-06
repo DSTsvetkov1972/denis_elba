@@ -15,6 +15,20 @@ session = requests.Session()
 session.keep_alive = False  # отключаем постоянные соединени
 # ConnectionError(ProtocolError('Connection aborted.', ConnectionResetError(10054, 'Удаленный хост принудительно разорвал существующее подключение', None, 10054, None)))
 
+def get_article_from_name(name):
+    
+    name_parts = str(name).split(' ')
+
+    if len(name_parts) > 1:
+        try:
+            return int(name_parts[-1])
+        except ValueError:
+            return None 
+    else:
+        return None
+             
+    
+    
 
 def excel_formater(excel_file_path, column_widths):
     wb = load_workbook(excel_file_path)
@@ -74,6 +88,7 @@ def get_all_goods():
         goods_df.drop_duplicates(inplace=True)
         goods_df = goods_df.sort_values('productMainName')
 
+
         goods_df.to_excel(os.path.join(os.getcwd(), 'Номенклатура.xlsx'), index=None)
 
         excel_formater(
@@ -85,6 +100,7 @@ def get_all_goods():
     
     except Exception as e:
         return (False, repr(e))
+    
 
 def get_all_contractors():
     
@@ -129,18 +145,20 @@ def get_all_contractors():
             
         bar.finish()    
             
-        goods_df = pd.concat(dfs, ignore_index=True)
-        goods_df.drop_duplicates(inplace=True)
-        goods_df = goods_df.sort_values('name')
+        contractors_df = pd.concat(dfs, ignore_index=True)
+        contractors_df.drop_duplicates(inplace=True)
+        contractors_df = contractors_df.sort_values('name')
+        contractors_df['idFromName'] = contractors_df['shortName'].apply(get_article_from_name)
+        contractors_df = contractors_df[['id', 'name', 'shortName', 'idFromName', 'inn', 'kpp', 'address']]
 
-        goods_df.to_excel(os.path.join(os.getcwd(), 'Контрагенты.xlsx'), index=None)
+        contractors_df.to_excel(os.path.join(os.getcwd(), 'Контрагенты.xlsx'), index=None)
 
         excel_formater(
             os.path.join(os.getcwd(), 'Контрагенты.xlsx'),
-            [38, 42, 24, 12, 12, 42]
+            [38, 42, 24, 12, 12, 12, 42]
         )
         
-        return (True, goods_df)
+        return (True, contractors_df)
     
     except Exception as e:
         return (False, repr(e))
@@ -186,4 +204,4 @@ if __name__ == '__main__':
     
 
 if __name__ == '__main__':
-    print(get_all_goods())
+    print(get_article_from_name('Dfcz 11'))

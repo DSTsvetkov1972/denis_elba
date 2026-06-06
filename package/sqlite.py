@@ -14,7 +14,8 @@ def get_product(article):
     with sqlite3.connect(os.path.join(os.getcwd(), 'app.db')) as conn:
         result = pd.read_sql_query(f"SELECT * FROM products WHERE articule={article}", conn)
         print(result)
-
+        
+        
 def get_contractor_id(name, operation):
     try:
         if operation in ['Закрытие смены', 'Аварийное закрытие партии']:
@@ -29,6 +30,23 @@ def get_contractor_id(name, operation):
                 return (False, f'Контрагент "{name}" не найден')
     except Exception as e:
         return(False, f'get_contractor_id: {repr(e)}')
+            
+
+def get_contractor_name_from_idFromName(idFromName):
+    try:
+        with sqlite3.connect(os.path.join(os.getcwd(), 'app.db')) as conn:
+            sql_res = pd.read_sql_query(f"SELECT * FROM contractors WHERE idFromName='{idFromName}'", conn)
+            names = list(sql_res['name'])
+            
+        if not names:
+            return (False, f'Код оператора {idFromName} не сопоставлен с контрагентом')
+        elif len(names)>1:
+            return(False, f'Коду оператора {idFromName} соответствует несколько контрагентов: {names}')
+        else:    
+            return(True, names[0])
+
+    except Exception as e:
+        return(False, f'get_contractor_name_from_idFromName: {repr(e)}')
     
 
 def get_good_name(article):
@@ -44,4 +62,4 @@ def get_good_name(article):
         return(False, f'get_contractor_id: {repr(e)}')
    
 if __name__ == '__main__':
-    print(get_good_name('222'))
+    print(get_contractor_name_from_idFromName(None))

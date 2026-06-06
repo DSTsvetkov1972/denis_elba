@@ -1,3 +1,3 @@
 d = {1:1,2:2,3:3}
 
-print(5 in d)
+print(list(range(10, 4, -1)))

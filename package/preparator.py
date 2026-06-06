@@ -7,7 +7,7 @@ sys.path.append(os.getcwd())
 from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill
 
-from package.sqlite import get_contractor_id, get_good_name
+from package.sqlite import get_contractor_id, get_good_name, get_contractor_name_from_idFromName
 
 FONT_COLOR_GREEN = Font(color='2E8B57')
 FONT_COLOR_RED = Font(color='FF0000')
@@ -35,8 +35,8 @@ def get_light_hex():
 
 def download_file_preparator(source_file_name):
     
-    try: 
-    #if 1:
+    #try: 
+    if 1:
         invoices_qty = 0
         if os.path.exists(os.path.join(os.getcwd(), 'Для накладных.xlsx')):
             os.remove(os.path.join(os.getcwd(), 'Для накладных.xlsx'))
@@ -48,13 +48,21 @@ def download_file_preparator(source_file_name):
         repetitions_dict = {}
 
         for row_number in range(ws.max_row-1, 4, -1):
+                 
             row_cells = ws[row_number]
             row_values = [cell.value for cell in row_cells]
             
             article = row_values[4]
             product_batch = row_values[13]
             operation = row_values[3]
-            contractor = row_values[18]
+
+            if row_number>5:
+                preceding_idFromName = ws.cell(column=16, row=row_number-1).value
+            else:     
+                preceding_idFromName = None  
+            get_contractor_res = get_contractor_name_from_idFromName(preceding_idFromName)    
+            # contractor = row_values[18] #get_contractor_name_from_idFromName(idFromName)
+            contractor_cell = ws.cell(column=19, row=row_number)
 
             if operation in ['Закрытие смены', 'Аварийное закрытие партии']:
                 for column_number in range(1, ws.max_column+1):
@@ -66,11 +74,14 @@ def download_file_preparator(source_file_name):
                     ws.cell(row=row_number, column=column_number).fill = PatternFill(start_color="707070", end_color="707070", fill_type="solid")
                     ws.cell(row=row_number, column=column_number).font = Font(color="FFFFFF", bold=True)   
 
-                if not contractor:
-                    contractor = 'Не заполнено!!!'
-                    contrctor_cell = ws.cell(column=19, row=row_number)
-                    contrctor_cell.value = contractor
-                    contrctor_cell.fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")    
+                if not get_contractor_res[0]:
+                    contractor_cell.fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+                    
+                contractor = get_contractor_res[1]     
+                contractor_cell.value = contractor 
+                
+            else:
+                contractor = None   
 
             if operation in ['Закрытие партии/чека', 'Закрытие смены', 'Аварийное закрытие партии']:
                 invoices_qty += 1
@@ -147,9 +158,9 @@ def download_file_preparator(source_file_name):
             wb.save('Для накладных.xlsx')
             return (True, 'Файл "Для накладных.xlsx" подготовлен. Ассортимент и контрагенты сопоставлены успешно.')
     
-    except Exception as e:
-        return(False, f"download_file_preparator {repr(e)}")
+    #except Exception as e:
+    #    return(False, f"download_file_preparator {repr(e)}")
 
     
 if __name__ == '__main__':
-    print(download_file_preparator('02.06.26.xlsx'))
+    print(download_file_preparator('05.06.26 тест.xlsx'))
