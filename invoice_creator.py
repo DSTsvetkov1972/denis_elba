@@ -31,9 +31,12 @@ while True:
         print(Fore.BLUE + '-'*n + Fore.RESET)        
         
         print(Fore.WHITE + '6' + Fore.BLUE + ' - обновить базу данных контрагентов' + Fore.RESET)
-        print(Fore.WHITE + '7' + Fore.BLUE + ' - обновить базу данных номенклатуры' + Fore.RESET)     
+        print(Fore.WHITE + '7' + Fore.BLUE + ' - обновить базу данных номенклатуры' + Fore.RESET)    
+        
+        print(Fore.BLUE + '-'*n + Fore.RESET)  
 
         print(Fore.MAGENTA + "Ваш выбор: " + Fore.RESET, end='')
+        
         choise = input()
 
         if choise == '1':
