@@ -8,10 +8,7 @@ jobs:
     runs-on: macos-latest  # <-- КЛЮЧЕВОЙ МОМЕНТ: запуск на macOS
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-    
-    
 
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,4 +20,4 @@ jobs:
           spec: 'invoice_creator.py'                  # Имя вашего главного скрипта
           requirements: 'requirements.txt'            # Файл с зависимостями (если есть)
           upload_exe_with_name: 'invoice_creator_mac'        # Имя артефакта для скачивания
-          options: --onefile, --windowed, --name "invoice_creator_mac"
+          options: --onefile, --windowed, --name "invoice_creator_mac", --icon "Scales.icns"
