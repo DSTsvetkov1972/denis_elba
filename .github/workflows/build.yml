@@ -18,4 +18,4 @@ jobs:
           spec: 'invoice_creator.py'                  # Имя вашего главного скрипта
           requirements: 'requirements.txt'            # Файл с зависимостями (если есть)
           upload_exe_with_name: 'invoice_creator_mac'        # Имя артефакта для скачивания
-          options: --onefile, --windowed, --name "MyApp", --icon "icon.icns"
+          options: --onefile, --windowed, --name "invoice_creator_mac"
