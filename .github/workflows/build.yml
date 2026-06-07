@@ -1,0 +1,21 @@
+name: Build macOS App
+
+on:
+  workflow_dispatch:  # Позволяет запускать сборку вручную из интерфейса GitHub
+
+jobs:
+  pyinstaller-build:
+    runs-on: macos-latest  # <-- КЛЮЧЕВОЙ МОМЕНТ: запуск на macOS
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Executable for macOS
+        uses: sayyid5416/pyinstaller@v1
+        with:
+          python_ver: '3.11'                          # Версия Python
+          spec: 'invoice_creator.py'                  # Имя вашего главного скрипта
+          requirements: 'requirements.txt'            # Файл с зависимостями (если есть)
+          upload_exe_with_name: 'invoice_creator_mac'        # Имя артефакта для скачивания
+          options: --onefile, --windowed, --name "MyApp", --icon "icon.icns"
