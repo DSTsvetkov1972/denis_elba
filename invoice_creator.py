@@ -6,12 +6,32 @@ from package.sqlite import df_to_sqlite
 from package.api import get_all_contractors, get_all_goods
 from package.invoices_maker import invoices_maker
 from package.confirm_download import confirm
-import os
+import os, sys
+import subprocess
 
 #if datetime.now()>datetime(2026, 6, 10):
 #    print(Fore.RED, 'Что-то пошло не так...', Fore.RESET)
 #    while True:
 #        continue
+
+
+def open_file_safe(file_path):
+    """Безопасное открытие файла на разных ОС"""
+    if not os.path.exists(file_path):
+        print(f"Ошибка: файл не найден - {file_path}")
+        return False
+    
+    try:
+        if sys.platform == 'win32':
+            os.startfile(file_path)
+        elif sys.platform == 'darwin':
+            subprocess.run(['open', file_path], check=True)
+        else:
+            subprocess.run(['xdg-open', file_path], check=True)
+        return True
+    except Exception as e:
+        print(f"Ошибка при открытии файла: {e}")
+        return False
         
 while True:
 
@@ -47,20 +67,24 @@ while True:
                 source_file_name = check_source_folder_res[1]
                 print(Fore.GREEN+f'В папке Исходник находится единственный файл "{source_file_name}" и он с расширением .xlsx'+Fore.RESET)
             else:
-                os.startfile(os.path.join(os.getcwd(), 'Исходник'))
+                open_file_safe(os.path.join(os.getcwd(), 'Исходник'))             
+                # os.startfile(os.path.join(os.getcwd(), 'Исходник'))
                 print(Fore.RED+f'{check_source_folder_res[1]}\n'+Fore.RESET)
                 continue
             
             if os.path.exists('~$Контрагенты.xlsx'):
+                open_file_safe(os.path.join(os.getcwd(), 'Контрагенты.xlsx'))    
                 os.startfile('Контрагенты.xlsx')
-                print(Fore.RED+'Файл "Контрагенты.xlsx" должен быть закрыт\n'+Fore.RESET)
+                # print(Fore.RED+'Файл "Контрагенты.xlsx" должен быть закрыт\n'+Fore.RESET)
                 continue
             if os.path.exists('~$Номенклатура.xlsx'):
-                os.startfile('Номенклатура.xlsx')
+                open_file_safe(os.path.join(os.getcwd(), 'Номенклатура.xlsx'))                    
+                # os.startfile('Номенклатура.xlsx')
                 print(Fore.RED+'Файл "Номенклатура.xlsx" должен быть закрыт\n'+Fore.RESET)
                 continue
             if os.path.exists('~$Для накладных.xlsx'):
-                os.startfile('Для накладных.xlsx')
+                open_file_safe(os.path.join(os.getcwd(), 'Для накладных.xlsx'))          
+                # os.startfile('Для накладных.xlsx')
                 print(Fore.RED+'Файл "Для накладных.xlsx" должен быть закрыт\n'+Fore.RESET)
                 continue
             
@@ -71,7 +95,8 @@ while True:
             else:
                 print(Fore.RED+f'{download_file_preparator_res[1]}\n'+Fore.RESET)
 
-            os.startfile('Для накладных.xlsx')
+            open_file_safe(os.path.join(os.getcwd(), 'Для накладных.xlsx')) 
+            # os.startfile('Для накладных.xlsx')
             continue            
 
 
@@ -95,7 +120,8 @@ while True:
                 opened_source_file_path = os.path.join(os.getcwd(), 'Исходник', f'~${source_file_name}')
 
                 if os.path.exists(opened_source_file_path):
-                    os.startfile(source_file_path)
+                    open_file_safe(source_file_path)                     
+                    # os.startfile(source_file_path)
                     print(Fore.RED+f'Файл "{source_file_name}" должен быть закрыт\n'+Fore.RESET)
                     continue
             elif len(source_file_names)>1:
@@ -110,7 +136,8 @@ while True:
                 print(Fore.RED+'Файл "Номенклатура.xlsx" не существует\n'+Fore.RESET)
                 continue
             if os.path.exists('~$Для накладных.xlsx'):
-                os.startfile('Для накладных.xlsx')
+                open_file_safe(os.path.join(os.getcwd(), 'Для накладных.xlsx')) 
+                # os.startfile('Для накладных.xlsx')
                 print(Fore.RED+'Файл "Для накладных.xlsx" должен быть закрыт\n'+Fore.RESET)
                 continue
 
@@ -123,11 +150,13 @@ while True:
             
         elif choise == '4':
             print(Fore.YELLOW + 'Открываем список контрагентов...' + Fore.RESET)
-            os.startfile('Контрагенты.xlsx')
+            open_file_safe(os.path.join(os.getcwd(), 'Контрагенты.xlsx'))             
+            # os.startfile('Контрагенты.xlsx')
             
         elif choise == '5':
             print(Fore.YELLOW + 'Открываем номенклатуру...' + Fore.RESET)
-            os.startfile('Номенклатура.xlsx')
+            open_file_safe(os.path.join(os.getcwd(), 'Номенклатура.xlsx'))             
+            # os.startfile('Номенклатура.xlsx')
 
         elif choise == '6':
             print(Fore.YELLOW + 'Обновляем базу данных контрагентов...' + Fore.RESET)
