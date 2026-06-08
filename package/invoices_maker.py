@@ -45,7 +45,7 @@ def invoices_maker():
                 warehouseItems = []
             else:
                 if row_cells_values[8]!='0':
-                    unitName = "шт"
+                    unitName = "шт."
                     quantity = float(row_cells_values[8])
                 else:
                     unitName = "кг"
@@ -60,14 +60,6 @@ def invoices_maker():
                     "discount": None
                     }
 
-                warehouseItem = {
-                    "productName": row_cells_values[5],
-                    "unitName": "кг",
-                    "quantity": float(row_cells_values[6]),
-                    "price": float(row_cells_values[9]),
-                    "ndsRate": None,
-                    "discount": None
-                    }
                                 
                 warehouseItems.append(warehouseItem)
                 
