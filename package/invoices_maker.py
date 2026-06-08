@@ -44,6 +44,22 @@ def invoices_maker():
                 create_invoice(payload)
                 warehouseItems = []
             else:
+                if row_cells_values[8]!='0':
+                    unitName = "шт"
+                    quantity = float(row_cells_values[8])
+                else:
+                    unitName = "кг"
+                    quantity = float(row_cells_values[6])
+                        
+                warehouseItem = {
+                    "productName": row_cells_values[5],
+                    "unitName": unitName,
+                    "quantity": quantity,
+                    "price": float(row_cells_values[9]),
+                    "ndsRate": None,
+                    "discount": None
+                    }
+
                 warehouseItem = {
                     "productName": row_cells_values[5],
                     "unitName": "кг",
@@ -52,7 +68,7 @@ def invoices_maker():
                     "ndsRate": None,
                     "discount": None
                     }
-                
+                                
                 warehouseItems.append(warehouseItem)
                 
                 product_batch = row_cells_values[13]
