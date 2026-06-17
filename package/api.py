@@ -48,8 +48,8 @@ def excel_formater(excel_file_path, column_widths):
 
 def get_all_goods():
     try:
-        if os.path.exists(os.path.join(os.getcwd(), 'Номенклатура.xlsx')):
-            os.remove(os.path.join(os.getcwd(), 'Номенклатура.xlsx'))
+        if os.path.exists(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'Номенклатура.xlsx')):
+            os.remove(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'Номенклатура.xlsx'))
 
         url = f"https://elba-api.kontur.ru/v1/organizations/{COMPANY_ID}/products/search?"
         headers = {
@@ -89,10 +89,10 @@ def get_all_goods():
         goods_df = goods_df.sort_values('productMainName')
 
 
-        goods_df.to_excel(os.path.join(os.getcwd(), 'Номенклатура.xlsx'), index=None)
+        goods_df.to_excel(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'Номенклатура.xlsx'), index=None)
 
         excel_formater(
-            os.path.join(os.getcwd(), 'Номенклатура.xlsx'),
+            os.path.join(os.path.expanduser('~'), 'invoice_creator', 'Номенклатура.xlsx'),
             [38, 32, 8]
         )
         
@@ -105,8 +105,8 @@ def get_all_goods():
 def get_all_contractors():
     
     try:
-        if os.path.exists(os.path.join(os.getcwd(), 'Контрагенты.xlsx')):
-            os.remove(os.path.join(os.getcwd(), 'Контрагенты.xlsx'))
+        if os.path.exists(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'Контрагенты.xlsx')):
+            os.remove(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'Контрагенты.xlsx'))
 
         url = f"https://elba-api.kontur.ru/v1/organizations/{COMPANY_ID}/contractors/search?"
 
@@ -151,10 +151,10 @@ def get_all_contractors():
         contractors_df['idFromName'] = contractors_df['shortName'].apply(get_article_from_name)
         contractors_df = contractors_df[['id', 'name', 'shortName', 'idFromName', 'inn', 'kpp', 'address']]
 
-        contractors_df.to_excel(os.path.join(os.getcwd(), 'Контрагенты.xlsx'), index=None)
+        contractors_df.to_excel(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'Контрагенты.xlsx'), index=None)
 
         excel_formater(
-            os.path.join(os.getcwd(), 'Контрагенты.xlsx'),
+            os.path.join(os.path.expanduser('~'), 'invoice_creator', 'Контрагенты.xlsx'),
             [38, 42, 24, 12, 12, 12, 42]
         )
         

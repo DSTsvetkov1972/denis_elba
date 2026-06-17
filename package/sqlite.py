@@ -6,12 +6,12 @@ import os
 
 
 def df_to_sqlite(df, table_name):
-    with sqlite3.connect(os.path.join(os.getcwd(), 'app.db')) as conn:
+    with sqlite3.connect(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'app.db')) as conn:
         df.to_sql(table_name, conn, if_exists='replace', index=False)
 
 
 def get_product(article):
-    with sqlite3.connect(os.path.join(os.getcwd(), 'app.db')) as conn:
+    with sqlite3.connect(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'app.db')) as conn:
         result = pd.read_sql_query(f"SELECT * FROM products WHERE articule={article}", conn)
         print(result)
         
@@ -21,7 +21,7 @@ def get_contractor_id(name, operation):
         if operation in ['Закрытие смены', 'Аварийное закрытие партии']:
             return(True, operation)
         
-        with sqlite3.connect(os.path.join(os.getcwd(), 'app.db')) as conn:
+        with sqlite3.connect(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'app.db')) as conn:
             sql_res = pd.read_sql_query(f"SELECT * FROM contractors WHERE name='{name}'", conn)
             
             if not sql_res.empty:
@@ -34,7 +34,7 @@ def get_contractor_id(name, operation):
 
 def get_contractor_name_from_idFromName(idFromName):
     try:
-        with sqlite3.connect(os.path.join(os.getcwd(), 'app.db')) as conn:
+        with sqlite3.connect(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'app.db')) as conn:
             sql_res = pd.read_sql_query(f"SELECT * FROM contractors WHERE idFromName='{idFromName}'", conn)
             names = list(sql_res['name'])
             
@@ -51,7 +51,7 @@ def get_contractor_name_from_idFromName(idFromName):
 
 def get_good_name(article):
     try:
-        with sqlite3.connect(os.path.join(os.getcwd(), 'app.db')) as conn:
+        with sqlite3.connect(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'app.db')) as conn:
             sql_res = pd.read_sql_query(f"SELECT * FROM goods WHERE article='{article}'", conn)
             
             if not sql_res.empty:

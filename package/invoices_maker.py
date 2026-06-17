@@ -10,7 +10,7 @@ from datetime import datetime
 
 def negative_weights_detector():
         
-        wb= load_workbook(os.path.join(os.getcwd(), 'Для накладных.xlsx'))
+        wb= load_workbook(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'Для накладных.xlsx'))
         ws = wb.active
 
         for row_number in range(4, ws.max_row-1):
@@ -21,11 +21,12 @@ def negative_weights_detector():
                 raise ValueError('Столбец G "Масса нетто" содержит отрицательные значения!')
 
 
-def invoices_maker():
-    try:
+def invoice_creator():
+    #try:
+    if 1:
         negative_weights_detector()
         
-        wb= load_workbook(os.path.join(os.getcwd(), 'Для накладных.xlsx'))
+        wb= load_workbook(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'Для накладных.xlsx'))
         ws = wb.active
         warehouseItems = []
         if ws.cell(column=1, row=3).value != 'Накладных:':
@@ -78,9 +79,9 @@ def invoices_maker():
         return (True, 'Накладные успешно созданы')       
                 
                 
-    except Exception as e:
-        return (False, repr(e))
+    #except Exception as e:
+    #    return (False, repr(e))
 
 if __name__ == '__main__':
-    # invoices_maker()
-    negative_weights_detector()
+    # invoice_creator()
+    invoice_creator()

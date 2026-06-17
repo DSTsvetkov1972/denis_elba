@@ -17,7 +17,7 @@ LIGHT_BLUE_FILL = PatternFill(start_color='DDEBF7',
 
 
 def check_source_folder():
-    source_files = list(os.walk('Исходник'))[0][2]
+    source_files = list(os.walk(os.path.join(os.path.expanduser('~'),'invoice_creator', 'Исходник')))[0][2]
     source_files_qty = len(source_files)
 
     if source_files_qty!=1:
@@ -38,10 +38,10 @@ def download_file_preparator(source_file_name):
     #try: 
     if 1:
         invoices_qty = 0
-        if os.path.exists(os.path.join(os.getcwd(), 'Для накладных.xlsx')):
-            os.remove(os.path.join(os.getcwd(), 'Для накладных.xlsx'))
+        if os.path.exists(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'Для накладных.xlsx')):
+            os.remove(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'Для накладных.xlsx'))
             
-        wb = load_workbook(os.path.join(os.getcwd(), 'Исходник', source_file_name))
+        wb = load_workbook(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'Исходник', source_file_name))
         ws = wb.active
         contractors_errors = 0
         goods_errors = 0
@@ -146,7 +146,7 @@ def download_file_preparator(source_file_name):
             err_message = f"Не удалось определить конрагентов: {contractors_errors}; товаров: {goods_errors}"
             err_message_cell.font = FONT_COLOR_RED
             err_message_cell.value = err_message
-            wb.save('Для накладных.xlsx')
+            wb.save(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'Для накладных.xlsx'))
             return (False, err_message)
         else:
             err_message_cell.font = FONT_COLOR_GREEN
@@ -155,7 +155,7 @@ def download_file_preparator(source_file_name):
             invoices_qty_cell.font = FONT_COLOR_GREEN
             invoices_qty_cell.value = invoices_qty
             
-            wb.save('Для накладных.xlsx')
+            wb.save(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'Для накладных.xlsx'))
             return (True, 'Файл "Для накладных.xlsx" подготовлен. Ассортимент и контрагенты сопоставлены успешно.')
     
     #except Exception as e:
