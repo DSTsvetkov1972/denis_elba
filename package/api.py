@@ -18,6 +18,55 @@ session.keep_alive = False  # отключаем постоянные соеди
 
 #API_KEY, COMPANY_ID, BANK_ACCOUNT_ID
 
+
+def highlight_duplicate_idfromname(file_path) -> None:
+    """
+    Сканирует Excel-файл, находит строки с непустыми повторяющимися значениями
+    в колонке 'idFromName' и заливает эти строки розовым цветом.
+
+    :param file_path: путь к исходному .xlsx файлу
+    :param sheet_name: имя листа (по умолчанию — активный лист)
+    :param output_path: путь для сохранения (по умолчанию перезаписывает исходный)
+    """
+    # 1. Читаем данные, чтобы найти дубликаты
+    df = pd.read_excel(file_path, dtype=str)
+    if 'idFromName' not in df.columns:
+        raise ValueError("В файле нет колонки 'idFromName'")
+
+    # Нормализуем: пустые строки и NaN считаем пустыми
+    col = df['idFromName'].fillna('').astype(str).str.strip()
+
+    # Считаем количество вхождений каждого непустого значения
+    counts = col[col != ''].value_counts()
+
+    # Множество "плохих" значений (встречаются более одного раза)
+    duplicates = set(counts[counts > 1].index)
+
+    # Индексы строк (в терминах Excel: +2, т.к. строка 1 — заголовок, а df.index с 0)
+    duplicate_row_indices = [
+        i for i, val in enumerate(col) if val in duplicates
+    ]
+
+    # 2. Открываем книгу и закрашиваем
+    wb = load_workbook(file_path)
+    ws = wb.active
+
+    pink_fill = PatternFill(start_color='FFC0CB', end_color='FFC0CB', fill_type='solid')
+
+    # Определяем диапазон колонок по заголовку
+    header = [cell.value for cell in ws[1]]
+    last_col = len(header)
+
+    for idx in duplicate_row_indices:
+        excel_row = idx + 2  # +1 из-за заголовка, +1 из-за 1-based нумерации
+        for col_idx in range(1, last_col + 1):
+            ws.cell(row=excel_row, column=col_idx).fill = pink_fill
+
+    # 3. Сохраняем
+    wb.save(file_path)
+    print(Fore.RED + f"Внимание! Есть контрагенты с дублированным idFromName: {len(duplicate_row_indices)}!")
+    
+
 def get_article_from_name(name):
     
     name_parts = str(name).split(' ')
@@ -184,6 +233,8 @@ def get_all_contractors():
             [16, 24, 38, 42, 24, 12, 12, 12, 42],
             PatternFill(fill_type='solid',fgColor='FFC6EFCE')
         )
+        
+        highlight_duplicate_idfromname(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Контрагенты.xlsx'))
             
         return (True, contractors_df)
         
@@ -234,4 +285,4 @@ if __name__ == '__main__':
 """    
 
 if __name__ == '__main__':
-    print(get_all_goods())
+    highlight_duplicate_idfromname(os.path.join(r'C:\Users\DSTsv\invoice_creator_v.2026-11-21', 'Контрагенты.xlsx'))

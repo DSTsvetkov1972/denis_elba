@@ -37,6 +37,9 @@ def get_contractor_name_from_idFromName(idFromName):
     try:
         with sqlite3.connect(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'app.db')) as conn:
             sql_res = pd.read_sql_query(f"SELECT * FROM contractors WHERE idFromName='{idFromName}'", conn)
+            if len(sql_res)>1:
+                return (False, f'Код оператора {idFromName} сопоставлен нескольким контрагентам')
+            
             names = list(sql_res['name'])
             
         if not names:
