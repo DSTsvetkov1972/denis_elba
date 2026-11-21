@@ -74,7 +74,7 @@ def get_all_goods():
                 }
             
             bar = FillingSquaresBar(
-                f' Выгружаем ассортимент для {COMPANY_NAME}:',
+                f'Выгружаем ассортимент для {COMPANY_NAME}:',
                 max=10,
                 suffix = '%(index)d/%(max)d',
                 fill='█', empty_fill='░',
