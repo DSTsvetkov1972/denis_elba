@@ -3,14 +3,15 @@ import os, sys
 sys.path.append(os.getcwd())
 from pprint import pprint
 
-from package.config import BANK_ACCOUNT_ID
+from package.config import COMPANIES
 from package.api import create_invoice
 
 from datetime import datetime
+from package.logo import version
 
 def negative_weights_detector():
         
-        wb= load_workbook(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'Для накладных.xlsx'))
+        wb= load_workbook(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Для накладных.xlsx'))
         ws = wb.active
 
         for row_number in range(4, ws.max_row-1):
@@ -21,12 +22,14 @@ def negative_weights_detector():
                 raise ValueError('Столбец G "Масса нетто" содержит отрицательные значения!')
 
 
-def invoice_creator():
+def invoice_creator(INN):
     #try:
     if 1:
+        BANK_ACCOUNT_ID = COMPANIES['INN']
+        
         negative_weights_detector()
         
-        wb= load_workbook(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'Для накладных.xlsx'))
+        wb= load_workbook(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Для накладных.xlsx'))
         ws = wb.active
         warehouseItems = []
         if ws.cell(column=1, row=3).value != 'Накладных:':

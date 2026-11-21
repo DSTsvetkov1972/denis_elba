@@ -13,15 +13,16 @@ logo = Fore.MAGENTA + """
 
 
 
-version = " v.2026-06-17"
+version = "v.2026-11-21"
 
 advertisement = """
  Нужна быстрая автоматизация или аналитика
  без ТЗ, совещаний, бюрократии и миллионного бюджета?
  Обращайтесь:
  Цветков Дмитрий Сергеевич
- DSTsvetkovPRO@yandex.ru
- +7 (903) 617-77-55
+ e-mail: DSTsvetkovPRO@yandex.ru
+ моб.:   +7(903)617-77-55
+ max:    +7(903)617-77-55 
 """
 
 advertisement_colored = Fore.YELLOW + advertisement + Fore.RESET
@@ -36,6 +37,6 @@ for ch in list(logo):
         ch_colored = ch
     logo_colored += ch_colored
 
-version_colored = Fore.BLACK + version + Fore.RESET    
+version_colored = Fore.BLACK + f" {version}" + Fore.RESET    
 
 logo_colored = logo_colored + version_colored + advertisement_colored

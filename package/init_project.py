@@ -5,20 +5,21 @@ from colorama import Fore, init, Style
 from package.logo import logo_colored
 from package.api import get_all_contractors, get_all_goods
 from package.sqlite import df_to_sqlite
+from package.logo import version
 
 init()
 print(Style.BRIGHT)
 print(logo_colored)
 
-if not os.path.exists(os.path.join(os.path.expanduser("~"), 'invoice_creator', 'Исходник')):
-    os.makedirs(os.path.join(os.path.expanduser("~"), 'invoice_creator', 'Исходник'))
+if not os.path.exists(os.path.join(os.path.expanduser("~"), f'invoice_creator_{version}', 'Исходник')):
+    os.makedirs(os.path.join(os.path.expanduser("~"), f'invoice_creator_{version}', 'Исходник'))
     print(Fore.GREEN+'Создана папка Исходник'+Fore.RESET)
     
-if not os.path.exists(os.path.join(os.path.expanduser("~"), 'invoice_creator', 'Архив')):
-    os.makedirs(os.path.join(os.path.expanduser("~"), 'invoice_creator', 'Архив'))
+if not os.path.exists(os.path.join(os.path.expanduser("~"), f'invoice_creator_{version}', 'Архив')):
+    os.makedirs(os.path.join(os.path.expanduser("~"), f'invoice_creator_{version}', 'Архив'))
     print(Fore.GREEN+'Создана папка Архив'+Fore.RESET)
 
-if not os.path.exists(os.path.join(os.path.expanduser('~'), 'invoice_creator', 'app.db')):
+if not os.path.exists(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'app.db')):
     print(Fore.YELLOW + 'Создаём базу данных контрагентов и номенклатуры...' + Fore.RESET)
 
     all_contractors_df = get_all_contractors()
