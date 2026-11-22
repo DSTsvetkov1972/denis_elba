@@ -5,7 +5,7 @@ sys.path.append(os.getcwd())
 import requests
 import pandas as pd
 from colorama import init, Fore
-from progress.bar import FillingSquaresBar
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Alignment, PatternFill
@@ -106,140 +106,185 @@ def excel_formater(excel_file_path, column_widths, fill):
     wb.save(excel_file_path)
 
 
+def get_company_goods(COMPANY_INN, COMPANY_REQUISITES):
 
+        API_KEY = COMPANY_REQUISITES['API_KEY']
+        COMPANY_ID = COMPANY_REQUISITES['COMPANY_ID']
+        COMPANY_NAME = COMPANY_REQUISITES['COMPANY_NAME']
 
-
-def get_all_goods():
-    
-    dfs = []
-    
-    try:
-        for COMPANY_INN, COMPANY_REQUISITES in COMPANIES.items():
-            API_KEY = COMPANY_REQUISITES['API_KEY']
-            COMPANY_ID = COMPANY_REQUISITES['COMPANY_ID']
-            COMPANY_NAME = COMPANY_REQUISITES['COMPANY_NAME']
+        url = f"https://elba-api.kontur.ru/v1/organizations/{COMPANY_ID}/products/search?"
+        headers = {
+            "X-Kontur-ApiKey": API_KEY,
+            "Content-Type": "application/json",
+            'Connection': 'close'
+            }
         
-            if os.path.exists(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Номенклатура.xlsx')):
-                os.remove(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Номенклатура.xlsx'))
-
-            url = f"https://elba-api.kontur.ru/v1/organizations/{COMPANY_ID}/products/search?"
-            headers = {
-                "X-Kontur-ApiKey": API_KEY,
-                "Content-Type": "application/json",
-                'Connection': 'close'
+        dfs = []
+        offset = 0
+        limit = 100
+        while True:
+            payload = {
+                "offset": offset,       
+                "limit": limit
+                    
                 }
+
+            response = session.post(url, headers=headers, json=payload)
             
-            print(Fore.BLACK + f'Выгружаем ассортимент для {COMPANY_NAME}' + Fore.RESET)
-            
-            offset = 0
-            limit = 100
-            while True:
-                payload = {
-                    "offset": offset,       
-                    "limit": limit
-                        
-                    }
+            products = response.json()['products']
+            if products:
 
-                response = session.post(url, headers=headers, json=payload)
-                
-                products = response.json()['products']
-                if products:
+                df = pd.DataFrame(products)
 
-                    df = pd.DataFrame(products)
-
-                    df.insert(0, 'binded_company_name', COMPANY_NAME)
-                    df.insert(0, 'binded_company_inn', COMPANY_INN)
-                    dfs.append(df)
-                else:
-                    break   
+                df.insert(0, 'binded_company_name', COMPANY_NAME)
+                df.insert(0, 'binded_company_inn', COMPANY_INN)
+                dfs.append(df)
                 offset += limit
-                
+            else:
+                res = pd.concat(dfs)
+                return res   
+            
+
+
+def get_all_goods(max_workers: int = 8):
+    out_path = os.path.join(
+        os.path.expanduser('~'), f'invoice_creator_{version}', 'Номенклатура.xlsx'
+    )
+    if os.path.exists(out_path):
+        os.remove(out_path)
+
+    print(Fore.BLACK + f'Выгружаем номенклатуру для {len(COMPANIES)} компаний (в {max_workers} потоков)' + Fore.RESET)
+
+    results = {}
+    try:
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_inn = {
+                executor.submit(get_company_goods, inn, req): inn
+                for inn, req in COMPANIES.items()
+            }
+            for future in as_completed(future_to_inn):
+                inn = future_to_inn[future]
+                name = COMPANIES[inn]['COMPANY_NAME']
+                try:
+                    df = future.result()
+                    results[inn] = df
+                    print(Fore.BLACK + f'  ✓ Готово: {name} ({len(df)} строк)' + Fore.RESET)
+                except Exception as e:
+                    print(Fore.RED + f'  ✗ Ошибка для {name}: {e!r}' + Fore.RESET)
+                    results[inn] = None
+
+        dfs = [df for df in results.values() if df is not None and not df.empty]
+        if not dfs:
+            return (False, 'Нет данных ни по одной компании')
+
         goods_df = pd.concat(dfs, ignore_index=True)
         goods_df.drop_duplicates(inplace=True)
         goods_df = goods_df.sort_values('productMainName')
 
-
-        goods_df.to_excel(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Номенклатура.xlsx'), index=None)
+        goods_df.to_excel(out_path, index=None)
 
         excel_formater(
-            os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Номенклатура.xlsx'),
+            out_path,
             [20, 24, 38, 32, 8],
             PatternFill(fill_type='solid', fgColor='FFDDEBF7')
         )
-    
+
         return (True, goods_df)
-        
+
     except Exception as e:
-            return (False, repr(e))
+        return (False, repr(e))
         
 
-def get_all_contractors():
-    
+def get_company_contractors(COMPANY_INN, COMPANY_REQUISITES):
+    dfs = []
+        
+    API_KEY = COMPANY_REQUISITES['API_KEY']
+    COMPANY_ID = COMPANY_REQUISITES['COMPANY_ID']
+    COMPANY_NAME = COMPANY_REQUISITES['COMPANY_NAME']
+
+    url = f"https://elba-api.kontur.ru/v1/organizations/{COMPANY_ID}/contractors/search?"
+
+    headers = {
+        "X-Kontur-ApiKey": API_KEY,
+        "Content-Type": "application/json",
+        'Connection': 'close'
+        }
+
+    offset = 0
+    limit = 100
+    while True:
+        payload = {
+            "offset": offset,       
+            "limit": limit
+            }
+
+        response = session.post(url, headers=headers, json=payload)
+        
+        if response.status_code != 200:
+            print(response.status_code)
+        
+        contractors = response.json()['contractors']
+        
+        if contractors:
+            df = pd.DataFrame(contractors)
+            df.insert(0, 'binded_company_name', COMPANY_NAME)
+            df.insert(0, 'binded_company_id', COMPANY_ID)
+            df.insert(0, 'binded_company_inn', COMPANY_INN)
+            dfs.append(df)
+            offset += limit
+        else:
+            res_df = pd.concat(dfs)
+            return res_df    
+
+
+
+def get_all_contractors(max_workers: int = 8):
     try:
-        dfs = []
-            
-        for COMPANY_INN, COMPANY_REQUISITES in COMPANIES.items():
-            API_KEY = COMPANY_REQUISITES['API_KEY']
-            COMPANY_ID = COMPANY_REQUISITES['COMPANY_ID']
-            COMPANY_NAME = COMPANY_REQUISITES['COMPANY_NAME']
-            
-            if os.path.exists(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Контрагенты.xlsx')):
-                os.remove(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Контрагенты.xlsx'))
+        out_path = os.path.join(
+            os.path.expanduser('~'), f'invoice_creator_{version}', 'Контрагенты.xlsx'
+        )
+        if os.path.exists(out_path):
+            os.remove(out_path)
 
-            url = f"https://elba-api.kontur.ru/v1/organizations/{COMPANY_ID}/contractors/search?"
+        print(Fore.BLACK + f'Выгружаем контрагентов для {len(COMPANIES)} компаний (в {max_workers} потоков)' + Fore.RESET)
 
-            headers = {
-                "X-Kontur-ApiKey": API_KEY,
-                "Content-Type": "application/json",
-                'Connection': 'close'
-                }
+        results = {}
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_inn = {
+                executor.submit(get_company_contractors, inn, req): inn
+                for inn, req in COMPANIES.items()
+            }
+            for future in as_completed(future_to_inn):
+                inn = future_to_inn[future]
+                name = COMPANIES[inn]['COMPANY_NAME']
+                try:
+                    df = future.result()
+                    results[inn] = df
+                    print(Fore.BLACK + f'  ✓ Готово: {name} ({len(df)} строк)' + Fore.RESET)
+                except Exception as e:
+                    # логируем, но не валим весь процесс — остальные компании уже качаются
+                    print(Fore.RED + f'  ✗ Ошибка для {name}: {e!r}' + Fore.RESET)
+                    results[inn] = None
 
-            print(Fore.BLACK + f'Выгружаем контрагентов для {COMPANY_NAME}' + Fore.RESET)
-            
-            offset = 0
-            limit = 100
-            while True:
-                payload = {
-                    "offset": offset,       
-                    "limit": limit
-                    }
+        dfs = [df for df in results.values() if df is not None and not df.empty]
+        if not dfs:
+            return (False, 'Нет данных ни по одной компании')
 
-                response = session.post(url, headers=headers, json=payload)
-                
-                if response.status_code != 200:
-                    print(response.status_code)
-                
-                contractors = response.json()['contractors']
-                
-                if contractors:
-                    df = pd.DataFrame(contractors)
-                    df.insert(0, 'binded_company_name', COMPANY_NAME)
-                    df.insert(0, 'binded_company_id', COMPANY_ID)
-                    df.insert(0, 'binded_company_inn', COMPANY_INN)
-                    dfs.append(df)
-                    offset += limit
-                else:
-                    break    
-  
-                
         contractors_df = pd.concat(dfs, ignore_index=True)
         contractors_df.drop_duplicates(inplace=True)
         contractors_df = contractors_df.sort_values('name')
         contractors_df['idFromName'] = contractors_df['shortName'].apply(get_article_from_name)
-        # contractors_df = contractors_df[['binded_company_inn', 'binded_company_name', 'id', 'name', 'shortName', 'idFromName', 'inn', 'kpp', 'address']]
-
-        contractors_df.to_excel(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Контрагенты.xlsx'), index=None)
+        contractors_df.to_excel(out_path, index=None)
 
         excel_formater(
-            os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Контрагенты.xlsx'),
+            out_path,
             [20, 42, 24, 38, 42, 24, 12, 12, 12, 42],
-            PatternFill(fill_type='solid',fgColor='FFC6EFCE')
+            PatternFill(fill_type='solid', fgColor='FFC6EFCE')
         )
-        
-        highlight_duplicate_idfromname(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Контрагенты.xlsx'))
-            
+        highlight_duplicate_idfromname(out_path)
+
         return (True, contractors_df)
-        
+
     except Exception as e:
         return (False, repr(e))
 
@@ -289,4 +334,4 @@ if __name__ == '__main__':
 """    
 
 if __name__ == '__main__':
-    highlight_duplicate_idfromname(os.path.join(r'C:\Users\DSTsv\invoice_creator_v.2026-11-21', 'Контрагенты.xlsx'))
+    get_all_contractors()
