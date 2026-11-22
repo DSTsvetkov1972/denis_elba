@@ -19,13 +19,15 @@ advertisement = """
  Нужна быстрая автоматизация или аналитика
  без ТЗ, совещаний, бюрократии и миллионного бюджета?
  Обращайтесь:
- Цветков Дмитрий Сергеевич
+"""
+ 
+contacts = """ Цветков Дмитрий Сергеевич
  e-mail: DSTsvetkovPRO@yandex.ru
  моб.:   +7(903)617-77-55
  max:    +7(903)617-77-55 
 """
 
-advertisement_colored = Fore.YELLOW + advertisement + Fore.RESET
+advertisement_colored = Fore.YELLOW + advertisement + Fore.BLACK + contacts + Fore.RESET
 
 logo_colored = ''
 for ch in list(logo):

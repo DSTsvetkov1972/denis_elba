@@ -129,33 +129,19 @@ def get_all_goods():
                 'Connection': 'close'
                 }
             
-            bar = FillingSquaresBar(
-                f'Выгружаем ассортимент для {COMPANY_NAME}:',
-                max=10,
-                suffix = '%(index)d/%(max)d',
-                fill='█', empty_fill='░',
-                width = 50)  
+            print(Fore.BLACK + f'Выгружаем ассортимент для {COMPANY_NAME}:' + Fore.RESET)
             
-
-            bar.start()
-            for fig in range(0, 10):
-                payload = {
-                    "filter": {
-                        "article": str(fig),                                              
-                    }
+            payload = {
                 }
 
-                response = session.post(url, headers=headers, json=payload)
+            response = session.post(url, headers=headers, json=payload)
 
-                df = pd.DataFrame(response.json()['products'])
+            df = pd.DataFrame(response.json()['products'])
 
-                df.insert(0, 'binded_company_name', COMPANY_NAME)
-                df.insert(0, 'binded_company_inn', COMPANY_INN)
-                dfs.append(df)
+            df.insert(0, 'binded_company_name', COMPANY_NAME)
+            df.insert(0, 'binded_company_inn', COMPANY_INN)
+            dfs.append(df)
                 
-                bar.next()
-                
-            bar.finish()    
                 
         goods_df = pd.concat(dfs, ignore_index=True)
         goods_df.drop_duplicates(inplace=True)
@@ -197,36 +183,22 @@ def get_all_contractors():
                 'Connection': 'close'
                 }
 
-            bar = FillingSquaresBar(
-                f'Выгружаем контрагентов для {COMPANY_NAME}:',
-                max=33,
-                suffix = '%(index)d/%(max)d',
-                fill='█', empty_fill='░',
-                width = 50)  
+            print(Fore.BLACK + f'Выгружаем контрагентов для {COMPANY_NAME}' + Fore.RESET)
             
-            bar.start()
+            payload = {
+            }
+
+            response = session.post(url, headers=headers, json=payload)
             
-            for letter in 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя':
-
-                payload = {
-                    "filter": {
-                        "name": letter,                                              
-                    }
-                }
-
-                response = session.post(url, headers=headers, json=payload)
-                
-                if response.status_code != 200:
-                    print(response.status_code)
-                
-                df = pd.DataFrame(response.json()['contractors'])
-                df.insert(0, 'binded_company_name', COMPANY_NAME)
-                df.insert(0, 'binded_company_id', COMPANY_ID)
-                df.insert(0, 'binded_company_inn', COMPANY_INN)
-                dfs.append(df)
-                bar.next()
-                
-            bar.finish()    
+            if response.status_code != 200:
+                print(response.status_code)
+            
+            df = pd.DataFrame(response.json()['contractors'])
+            df.insert(0, 'binded_company_name', COMPANY_NAME)
+            df.insert(0, 'binded_company_id', COMPANY_ID)
+            df.insert(0, 'binded_company_inn', COMPANY_INN)
+            dfs.append(df)
+  
                 
         contractors_df = pd.concat(dfs, ignore_index=True)
         contractors_df.drop_duplicates(inplace=True)
