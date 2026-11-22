@@ -9,6 +9,7 @@ from package.invoices_maker import invoice_creator
 from package.confirm_download import confirm
 import os, sys
 import subprocess
+from time import sleep
 
 trial = datetime(2026, 11, 30)
 if datetime.now()>trial:
@@ -35,9 +36,11 @@ def open_file_safe(file_path):
         print(f"Ошибка при открытии файла: {e}")
         return False
         
-while True:
+    
+try: 
+    while True:
 
-    try:
+
         n = 60
         print(Fore.BLUE + '-'*n + Fore.RESET)
 
@@ -181,8 +184,10 @@ while True:
                 print(Fore.RED+f'\n{all_goods_df[1]}\n'+Fore.RESET) 
         
 
-    except Exception as e:
-        print(Fore.RED, str(e), Fore.RESET)
+except Exception as e:
+    print(Fore.RED, str(e), Fore.RESET)
+    while True:
+        sleep(1)
 
 
 

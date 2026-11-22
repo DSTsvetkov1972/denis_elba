@@ -5,7 +5,6 @@ sys.path.append(os.getcwd())
 import requests
 import pandas as pd
 from colorama import init, Fore
-from package.config_bkp import COMPANIES
 from progress.bar import FillingSquaresBar
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
