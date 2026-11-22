@@ -1,45 +1,48 @@
-from package import init_project
-from package.logo import version
-from colorama import Fore
-from datetime import datetime
-from package.preparator import check_source_folder, download_file_preparator
-from package.sqlite import df_to_sqlite
-from package.api import get_all_contractors, get_all_goods
-from package.invoices_maker import invoice_creator
-from package.confirm_download import confirm
-import os, sys
-import subprocess
-from time import sleep
-
-trial = datetime(2026, 11, 30)
-if datetime.now()>trial:
-    print(Fore.RED, f'Программу можно было пользоваться без оплаты до {trial}', Fore.RESET)
-    while True:
-        continue
-
-
-def open_file_safe(file_path):
-    """Безопасное открытие файла на разных ОС"""
-    if not os.path.exists(file_path):
-        print(f"Ошибка: файл не найден - {file_path}")
-        return False
+try:
+    from colorama import Fore
+    import os, sys
+    import subprocess
+    from time import sleep
+    from datetime import datetime
     
-    try:
-        if sys.platform == 'win32':
-            os.startfile(file_path)
-        elif sys.platform == 'darwin':
-            subprocess.run(['open', file_path], check=True)
-        else:
-            subprocess.run(['xdg-open', file_path], check=True)
-        return True
-    except Exception as e:
-        print(f"Ошибка при открытии файла: {e}")
-        return False
+    from package import init_project
+    from package.logo import version
+
+    from package.preparator import check_source_folder, download_file_preparator
+    from package.sqlite import df_to_sqlite
+    from package.api import get_all_contractors, get_all_goods
+    from package.invoices_maker import invoice_creator
+    from package.confirm_download import confirm
+
+
+    trial = datetime(2026, 11, 30)
+    if datetime.now()>trial:
+        print(Fore.RED, f'Программу можно было пользоваться без оплаты до {trial}', Fore.RESET)
+        while True:
+            continue
+
+
+    def open_file_safe(file_path):
+        """Безопасное открытие файла на разных ОС"""
+        if not os.path.exists(file_path):
+            print(f"Ошибка: файл не найден - {file_path}")
+            return False
         
-    
-try: 
-    while True:
+        try:
+            if sys.platform == 'win32':
+                os.startfile(file_path)
+            elif sys.platform == 'darwin':
+                subprocess.run(['open', file_path], check=True)
+            else:
+                subprocess.run(['xdg-open', file_path], check=True)
+            return True
+        except Exception as e:
+            print(f"Ошибка при открытии файла: {e}")
+            return False
+            
+        
 
+    while True:
 
         n = 60
         print(Fore.BLUE + '-'*n + Fore.RESET)
@@ -93,7 +96,7 @@ try:
                 print(Fore.RED+'Файл "Для накладных.xlsx" должен быть закрыт\n'+Fore.RESET)
                 continue
             
-           
+        
             download_file_preparator_res = download_file_preparator(source_file_name)
             if download_file_preparator_res[0]:
                 print(Fore.GREEN+f'{download_file_preparator_res[1]}\n'+Fore.RESET)
