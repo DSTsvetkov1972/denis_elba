@@ -129,19 +129,30 @@ def get_all_goods():
                 'Connection': 'close'
                 }
             
-            print(Fore.BLACK + f'Выгружаем ассортимент для {COMPANY_NAME}:' + Fore.RESET)
+            print(Fore.BLACK + f'Выгружаем ассортимент для {COMPANY_NAME}' + Fore.RESET)
             
-            payload = {
-                }
+            offset = 0
+            limit = 100
+            while True:
+                payload = {
+                    "offset": offset,       
+                    "limit": limit
+                        
+                    }
 
-            response = session.post(url, headers=headers, json=payload)
-
-            df = pd.DataFrame(response.json()['products'])
-
-            df.insert(0, 'binded_company_name', COMPANY_NAME)
-            df.insert(0, 'binded_company_inn', COMPANY_INN)
-            dfs.append(df)
+                response = session.post(url, headers=headers, json=payload)
                 
+                products = response.json()['products']
+                if products:
+
+                    df = pd.DataFrame(products)
+
+                    df.insert(0, 'binded_company_name', COMPANY_NAME)
+                    df.insert(0, 'binded_company_inn', COMPANY_INN)
+                    dfs.append(df)
+                else:
+                    break   
+                offset += limit
                 
         goods_df = pd.concat(dfs, ignore_index=True)
         goods_df.drop_duplicates(inplace=True)
@@ -185,19 +196,30 @@ def get_all_contractors():
 
             print(Fore.BLACK + f'Выгружаем контрагентов для {COMPANY_NAME}' + Fore.RESET)
             
-            payload = {
-            }
+            offset = 0
+            limit = 100
+            while True:
+                payload = {
+                    "offset": offset,       
+                    "limit": limit
+                    }
 
-            response = session.post(url, headers=headers, json=payload)
-            
-            if response.status_code != 200:
-                print(response.status_code)
-            
-            df = pd.DataFrame(response.json()['contractors'])
-            df.insert(0, 'binded_company_name', COMPANY_NAME)
-            df.insert(0, 'binded_company_id', COMPANY_ID)
-            df.insert(0, 'binded_company_inn', COMPANY_INN)
-            dfs.append(df)
+                response = session.post(url, headers=headers, json=payload)
+                
+                if response.status_code != 200:
+                    print(response.status_code)
+                
+                contractors = response.json()['contractors']
+                
+                if contractors:
+                    df = pd.DataFrame(contractors)
+                    df.insert(0, 'binded_company_name', COMPANY_NAME)
+                    df.insert(0, 'binded_company_id', COMPANY_ID)
+                    df.insert(0, 'binded_company_inn', COMPANY_INN)
+                    dfs.append(df)
+                    offset += limit
+                else:
+                    break    
   
                 
         contractors_df = pd.concat(dfs, ignore_index=True)

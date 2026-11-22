@@ -27,7 +27,7 @@ contacts = """ Цветков Дмитрий Сергеевич
  max:    +7(903)617-77-55 
 """
 
-advertisement_colored = Fore.YELLOW + advertisement + Fore.BLACK + contacts + Fore.RESET
+advertisement_colored = Fore.YELLOW + advertisement + Fore.WHITE + contacts + Fore.RESET
 
 logo_colored = ''
 for ch in list(logo):

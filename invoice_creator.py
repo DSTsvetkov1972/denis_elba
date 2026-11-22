@@ -198,9 +198,6 @@ while True:
 
     except Exception as e:
         print(Fore.RED, str(e), Fore.RESET)
-        while True:
-            sleep(1)
-
 
 
 
