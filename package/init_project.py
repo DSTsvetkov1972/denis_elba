@@ -19,20 +19,20 @@ if not os.path.exists(os.path.join(os.path.expanduser("~"), f'invoice_creator_{v
     os.makedirs(os.path.join(os.path.expanduser("~"), f'invoice_creator_{version}', 'Архив'))
     print(Fore.GREEN+'Создана папка Архив'+Fore.RESET)
 
-if not os.path.exists(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'app.db')):
-    print(Fore.YELLOW + 'Создаём базу данных контрагентов и номенклатуры...' + Fore.RESET)
+#if not os.path.exists(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'app.db')):
+#    print(Fore.YELLOW + 'Создаём базу данных контрагентов и номенклатуры...' + Fore.RESET)
 
-    all_contractors_df = get_all_contractors()
+all_contractors_df = get_all_contractors()
 
-    if all_contractors_df[0]:
-        df_to_sqlite(all_contractors_df[1], 'contractors')
-    else:
-        print(Fore.RED+f'\n{all_contractors_df[1]}\n'+Fore.RESET)
+if all_contractors_df[0]:
+    df_to_sqlite(all_contractors_df[1], 'contractors')
+else:
+    print(Fore.RED+f'\n{all_contractors_df[1]}\n'+Fore.RESET)
 
-                
-    all_goods_df = get_all_goods()
+            
+all_goods_df = get_all_goods()
 
-    if all_goods_df[0]:
-        df_to_sqlite(all_goods_df[1], 'goods')
-    else:
-        print(Fore.RED+f'\n{all_goods_df[1]}\n'+Fore.RESET)
+if all_goods_df[0]:
+    df_to_sqlite(all_goods_df[1], 'goods')
+else:
+    print(Fore.RED+f'\n{all_goods_df[1]}\n'+Fore.RESET)
