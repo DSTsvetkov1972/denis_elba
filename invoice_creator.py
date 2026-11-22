@@ -1,10 +1,11 @@
-try:
-    from colorama import Fore
-    import os, sys
-    import subprocess
-    from time import sleep
-    from datetime import datetime
+
+from colorama import Fore
+import os, sys
+import subprocess
+from time import sleep
+from datetime import datetime
     
+try:    
     from package import init_project
     from package.logo import version
 
@@ -13,36 +14,44 @@ try:
     from package.api import get_all_contractors, get_all_goods
     from package.invoices_maker import invoice_creator
     from package.confirm_download import confirm
+except Exception as e:
+    print(Fore.RED + 'Ошибка инициализации программы.\n' +
+          'Проверьте, что в папке с исполняемым файлом есть валидный файл config.json' + Fore.RESET)
+    print(str(e))
+    while True:
+        sleep(2)
 
 
-    trial = datetime(2026, 11, 30)
-    if datetime.now()>trial:
-        print(Fore.RED, f'Программу можно было пользоваться без оплаты до {trial}', Fore.RESET)
-        while True:
-            continue
+trial = datetime(2026, 11, 30)
+if datetime.now()>trial:
+    print(Fore.RED, f'Программу можно было пользоваться без оплаты до {trial}', Fore.RESET)
+    while True:
+        continue
 
 
-    def open_file_safe(file_path):
-        """Безопасное открытие файла на разных ОС"""
-        if not os.path.exists(file_path):
-            print(f"Ошибка: файл не найден - {file_path}")
-            return False
-        
-        try:
-            if sys.platform == 'win32':
-                os.startfile(file_path)
-            elif sys.platform == 'darwin':
-                subprocess.run(['open', file_path], check=True)
-            else:
-                subprocess.run(['xdg-open', file_path], check=True)
-            return True
-        except Exception as e:
-            print(f"Ошибка при открытии файла: {e}")
-            return False
+def open_file_safe(file_path):
+    """Безопасное открытие файла на разных ОС"""
+    if not os.path.exists(file_path):
+        print(f"Ошибка: файл не найден - {file_path}")
+        return False
+    
+    try:
+        if sys.platform == 'win32':
+            os.startfile(file_path)
+        elif sys.platform == 'darwin':
+            subprocess.run(['open', file_path], check=True)
+        else:
+            subprocess.run(['xdg-open', file_path], check=True)
+        return True
+    except Exception as e:
+        print(f"Ошибка при открытии файла: {e}")
+        return False
             
         
 
-    while True:
+while True:
+    
+    try:
 
         n = 60
         print(Fore.BLUE + '-'*n + Fore.RESET)
@@ -187,10 +196,10 @@ try:
                 print(Fore.RED+f'\n{all_goods_df[1]}\n'+Fore.RESET) 
         
 
-except Exception as e:
-    print(Fore.RED, str(e), Fore.RESET)
-    while True:
-        sleep(1)
+    except Exception as e:
+        print(Fore.RED, str(e), Fore.RESET)
+        while True:
+            sleep(1)
 
 
 
