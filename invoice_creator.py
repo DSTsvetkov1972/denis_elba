@@ -12,7 +12,7 @@ import subprocess
 
 trial = datetime(2026, 11, 30)
 if datetime.now()>trial:
-    print(Fore.RED, f'Программу можно было тестировать без оплаты до {trial}', Fore.RESET)
+    print(Fore.RED, f'Программу можно было пользоваться без оплаты до {trial}', Fore.RESET)
     while True:
         continue
 

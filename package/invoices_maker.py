@@ -3,11 +3,14 @@ import os, sys
 sys.path.append(os.getcwd())
 from pprint import pprint
 
-from package.config import COMPANIES
+import json
 from package.api import create_invoice
 
 from datetime import datetime
 from package.logo import version
+
+with open(os.path.join(os.getcwd(), 'config.json'), 'r', encoding='utf-8') as f:
+    COMPANIES = json.load(f)['COMPANIES']
 
 def negative_weights_detector():
         
@@ -22,10 +25,9 @@ def negative_weights_detector():
                 raise ValueError('Столбец G "Масса нетто" содержит отрицательные значения!')
 
 
-def invoice_creator(INN):
+def invoice_creator():
     #try:
     if 1:
-        BANK_ACCOUNT_ID = COMPANIES['INN']
         
         negative_weights_detector()
         
@@ -38,6 +40,8 @@ def invoice_creator(INN):
             invoice_qty = str(ws.cell(column=2, row=3).value)
         
         invoice_number = 0
+        # binded_company_inn = None
+        
         for row_number in range(5, ws.max_row):
             row_cells_values = [str(cell.value) for cell in ws[row_number]]
 
@@ -45,9 +49,11 @@ def invoice_creator(INN):
                 invoice_number += 1
                 print(f'{invoice_number} из {invoice_qty}. Создаём накладную для партии {product_batch}')
                 # pprint(payload)
-                create_invoice(payload)
+                create_invoice(bounded_company_inn, payload)
                 warehouseItems = []
             else:
+                bounded_company_inn = row_cells_values[20]
+                
                 if row_cells_values[8]!='0':
                     unitName = "шт."
                     quantity = float(row_cells_values[8])
@@ -69,6 +75,8 @@ def invoice_creator(INN):
                 
                 product_batch = row_cells_values[13]
                 
+                BANK_ACCOUNT_ID = COMPANIES[bounded_company_inn]['BANK_ACCOUNT_ID']
+      
                 payload = {
                     "request": {},
                     "bankAccountId": BANK_ACCOUNT_ID,

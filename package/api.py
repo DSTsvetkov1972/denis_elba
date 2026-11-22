@@ -5,12 +5,17 @@ sys.path.append(os.getcwd())
 import requests
 import pandas as pd
 from colorama import init, Fore
-from package.config import COMPANIES
+from package.config_bkp import COMPANIES
 from progress.bar import FillingSquaresBar
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Alignment, PatternFill
 from package.logo import version
+
+import json
+
+with open(os.path.join(os.getcwd(), 'config.json'), 'r', encoding='utf-8') as f:
+    COMPANIES = json.load(f)['COMPANIES']
 
 session = requests.Session()
 session.keep_alive = False  # отключаем постоянные соединени
@@ -64,7 +69,10 @@ def highlight_duplicate_idfromname(file_path) -> None:
 
     # 3. Сохраняем
     wb.save(file_path)
-    print(Fore.RED + f"Внимание! Есть контрагенты с дублированным idFromName: {len(duplicate_row_indices)}!")
+    
+    duplicate_row_indices_qty = len(duplicate_row_indices)
+    if duplicate_row_indices_qty:
+        print(Fore.RED + f"Внимание! Контрагентов с одинаковым сопоставленным оператором из весов: {duplicate_row_indices_qty/2}!")
     
 
 def get_article_from_name(name):
@@ -142,8 +150,8 @@ def get_all_goods():
 
                 df = pd.DataFrame(response.json()['products'])
 
-                df.insert(0, 'COMPANY_NAME', COMPANY_NAME)
-                df.insert(0, 'COMPANY_INN', COMPANY_INN)
+                df.insert(0, 'binded_company_name', COMPANY_NAME)
+                df.insert(0, 'binded_company_inn', COMPANY_INN)
                 dfs.append(df)
                 
                 bar.next()
@@ -159,7 +167,7 @@ def get_all_goods():
 
         excel_formater(
             os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Номенклатура.xlsx'),
-            [16, 24, 38, 32, 8],
+            [20, 24, 38, 32, 8],
             PatternFill(fill_type='solid', fgColor='FFDDEBF7')
         )
     
@@ -213,8 +221,9 @@ def get_all_contractors():
                     print(response.status_code)
                 
                 df = pd.DataFrame(response.json()['contractors'])
-                df.insert(0, 'COMPANY_NAME', COMPANY_NAME)
-                df.insert(0, 'COMPANY_INN', COMPANY_INN)
+                df.insert(0, 'binded_company_name', COMPANY_NAME)
+                df.insert(0, 'binded_company_id', COMPANY_ID)
+                df.insert(0, 'binded_company_inn', COMPANY_INN)
                 dfs.append(df)
                 bar.next()
                 
@@ -224,13 +233,13 @@ def get_all_contractors():
         contractors_df.drop_duplicates(inplace=True)
         contractors_df = contractors_df.sort_values('name')
         contractors_df['idFromName'] = contractors_df['shortName'].apply(get_article_from_name)
-        contractors_df = contractors_df[['COMPANY_INN', 'COMPANY_NAME', 'id', 'name', 'shortName', 'idFromName', 'inn', 'kpp', 'address']]
+        # contractors_df = contractors_df[['binded_company_inn', 'binded_company_name', 'id', 'name', 'shortName', 'idFromName', 'inn', 'kpp', 'address']]
 
         contractors_df.to_excel(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Контрагенты.xlsx'), index=None)
 
         excel_formater(
             os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Контрагенты.xlsx'),
-            [16, 24, 38, 42, 24, 12, 12, 12, 42],
+            [20, 42, 24, 38, 42, 24, 12, 12, 12, 42],
             PatternFill(fill_type='solid',fgColor='FFC6EFCE')
         )
         
@@ -241,11 +250,13 @@ def get_all_contractors():
     except Exception as e:
         return (False, repr(e))
 
-
-def create_invoice(COMPANY_INN, payload):
+def create_invoice(binded_company_inn, payload):
+    # pprint(binded_company_inn)
+    # pprint(payload)
     
-    COMPANY_REQUISITES = COMPANIES[COMPANY_INN]
+    COMPANY_REQUISITES = COMPANIES[binded_company_inn]
     API_KEY = COMPANY_REQUISITES['API_KEY']
+    COMPANY_ID = COMPANY_REQUISITES['COMPANY_ID']
     
     # url = f"https://elba-api.kontur.ru/v1/organizations/{COMPANY_ID}/products/search?"
     url = f"https://elba-api.kontur.ru/v1/organizations/{COMPANY_ID}/delivery-notes?"

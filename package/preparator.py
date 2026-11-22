@@ -8,7 +8,7 @@ sys.path.append(os.getcwd())
 from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill
 
-from package.sqlite import get_contractor_id, get_good_name, get_contractor_name_from_idFromName
+from package.sqlite import get_contractor_id, get_good_name, get_info_from_idFromName
 
 FONT_COLOR_GREEN = Font(color='2E8B57')
 FONT_COLOR_RED = Font(color='FF0000')
@@ -36,8 +36,8 @@ def get_light_hex():
 
 def download_file_preparator(source_file_name):
     
-    #try: 
-    if 1:
+    try: 
+    #if 1:
         invoices_qty = 0
         if os.path.exists(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Для накладных.xlsx')):
             os.remove(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Для накладных.xlsx'))
@@ -61,9 +61,9 @@ def download_file_preparator(source_file_name):
                 preceding_idFromName = ws.cell(column=16, row=row_number-1).value
             else:     
                 preceding_idFromName = None  
-            get_contractor_res = get_contractor_name_from_idFromName(preceding_idFromName)    
-            # contractor = row_values[18] #get_contractor_name_from_idFromName(idFromName)
+            get_contractor_res = get_info_from_idFromName(preceding_idFromName)    
             contractor_cell = ws.cell(column=19, row=row_number)
+            binded_company_cell = ws.cell(column=21, row=row_number)
 
             if operation in ['Закрытие смены', 'Аварийное закрытие партии']:
                 for column_number in range(1, ws.max_column+1):
@@ -77,12 +77,24 @@ def download_file_preparator(source_file_name):
 
                 if not get_contractor_res[0]:
                     contractor_cell.fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
-                    
-                contractor = get_contractor_res[1]     
-                contractor_cell.value = contractor 
+                    binded_company_cell.fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid") 
+ 
+                    contractor = get_contractor_res[1]
+                    binded_company_name = get_contractor_res[1]
+                    binded_company_inn = get_contractor_res[1]     
+                else:                
+                    contractor = get_contractor_res[1]['name']
+                    binded_company_name = get_contractor_res[1]['binded_company_name'] 
+                    binded_company_inn = get_contractor_res[1]['binded_company_inn'] 
+                
+                
+                contractor_cell.value = contractor
+                
+                
+                binded_company_cell.value = binded_company_name   
                 
             else:
-                contractor = None   
+                contractor = None
 
             if operation in ['Закрытие партии/чека', 'Закрытие смены', 'Аварийное закрытие партии']:
                 invoices_qty += 1
@@ -108,8 +120,12 @@ def download_file_preparator(source_file_name):
                 contractor_cell.value = contractor_cell_value
                 contractor_cell.font = contractor_cell_color
                 
+                binded_company_inn_cell = ws.cell(row=row_number, column=21)
+                binded_company_inn_cell.value = binded_company_inn
+                binded_company_inn_cell.font = contractor_cell_color
+                
                 productMainName_cell = ws.cell(row=row_number, column=6)
-                get_good_name_res = get_good_name(row_values[4])
+                get_good_name_res = get_good_name(row_values[4], binded_company_name)
                 
                 if get_good_name_res[0]:
                     ws.cell(row=row_number, column=5).font = FONT_COLOR_GREEN
@@ -159,8 +175,8 @@ def download_file_preparator(source_file_name):
             wb.save(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Для накладных.xlsx'))
             return (True, 'Файл "Для накладных.xlsx" подготовлен. Ассортимент и контрагенты сопоставлены успешно.')
     
-    #except Exception as e:
-    #    return(False, f"download_file_preparator {repr(e)}")
+    except Exception as e:
+        return(False, f"download_file_preparator {repr(e)}")
 
     
 if __name__ == '__main__':
