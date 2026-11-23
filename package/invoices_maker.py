@@ -77,15 +77,27 @@ def invoice_creator():
                 
                 BANK_ACCOUNT_ID = COMPANIES[bounded_company_inn]['BANK_ACCOUNT_ID']
       
-                payload = {
-                    "request": {},
-                    "bankAccountId": BANK_ACCOUNT_ID,
-                    "contractorId": row_cells_values[18],
-                    "consigneeId": row_cells_values[18],      
-                    "number": product_batch,
-                    "warehouseItems": warehouseItems,
-                    "date": datetime.strptime(row_cells_values[2], "%d.%m.%Y %H:%M:%S").strftime("%Y-%m-%d")
-                }
+                try:      
+                    payload = {
+                        "request": {},
+                        "bankAccountId": BANK_ACCOUNT_ID,
+                        "contractorId": row_cells_values[18],
+                        "consigneeId": row_cells_values[18],      
+                        "number": product_batch,
+                        "warehouseItems": warehouseItems,
+                        "date": datetime.strptime(row_cells_values[2], "%d.%m.%Y %H:%M:%S").strftime("%Y-%m-%d")
+                    }
+                except:    
+                
+                    payload = {
+                        "request": {},
+                        "bankAccountId": BANK_ACCOUNT_ID,
+                        "contractorId": row_cells_values[18],
+                        "consigneeId": row_cells_values[18],      
+                        "number": product_batch,
+                        "warehouseItems": warehouseItems,
+                        "date": datetime.strptime(row_cells_values[2], "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d")
+                    }
                 
         return (True, 'Накладные успешно созданы')       
                 
