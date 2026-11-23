@@ -56,16 +56,16 @@ def invoice_creator():
                 
                 if row_cells_values[8]!='0':
                     unitName = "шт."
-                    quantity = float(row_cells_values[8])
+                    quantity = float(row_cells_values[8].replace(',', '.'))
                 else:
                     unitName = "кг"
-                    quantity = float(row_cells_values[6])
+                    quantity = float(row_cells_values[6].replace(',', '.'))
                         
                 warehouseItem = {
                     "productName": row_cells_values[5],
                     "unitName": unitName,
                     "quantity": quantity,
-                    "price": float(row_cells_values[9]),
+                    "price": float(row_cells_values[9].replace(',', '.')),
                     "ndsRate": None,
                     "discount": None
                     }

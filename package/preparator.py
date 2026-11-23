@@ -42,7 +42,7 @@ def download_file_preparator(source_file_name):
         if os.path.exists(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Для накладных.xlsx')):
             os.remove(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Для накладных.xlsx'))
             
-        wb = load_workbook(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Исходник', source_file_name))
+        wb = load_workbook(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Исходник', source_file_name), data_only=True)
         ws = wb.active
         contractors_errors = 0
         goods_errors = 0

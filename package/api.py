@@ -169,7 +169,7 @@ def get_all_goods():
                 try:
                     df = future.result()
                     results[inn] = df
-                    print(Fore.GREEN + '✓ ' + Fore.BLACK + f'Готово: {name} ({len(df)} строк)' + Fore.RESET)
+                    print(Fore.GREEN + f'Для {name} получено позиций номенклатуры: ({len(df)} строк)' + Fore.RESET)
                 except Exception as e:
                     print(Fore.RED + f'✗ Ошибка для {name}: {e!r}' + Fore.RESET)
                     results[inn] = None
@@ -262,7 +262,7 @@ def get_all_contractors():
                 try:
                     df = future.result()
                     results[inn] = df
-                    print(Fore.GREEN + '✓ ' + Fore.BLACK + f'Готово:{name} ({len(df)} строк)' + Fore.RESET)
+                    print(Fore.GREEN + f'Для {name} получено контрагентов: ({len(df)} строк)' + Fore.RESET)
                 except Exception as e:
                     # логируем, но не валим весь процесс — остальные компании уже качаются
                     print(Fore.RED + f'✗ Ошибка для {name}: {e!r}' + Fore.RESET)
