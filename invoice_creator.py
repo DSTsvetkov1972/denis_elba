@@ -84,23 +84,23 @@ while True:
                 source_file_name = check_source_folder_res[1]
                 print(Fore.GREEN+f'В папке Исходник находится единственный файл "{source_file_name}" и он с расширением .xlsx'+Fore.RESET)
             else:
-                open_file_safe(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Исходник'))             
-                # os.startfile(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Исходник'))
+                open_file_safe(os.path.join(os.getcwd(), 'Исходник'))             
+                # os.startfile(os.path.join(os.getcwd(), 'Исходник'))
                 print(Fore.RED+f'{check_source_folder_res[1]}\n'+Fore.RESET)
                 continue
             
-            if os.path.exists(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', '~$Контрагенты.xlsx')):
-                open_file_safe(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Контрагенты.xlsx'))    
+            if os.path.exists(os.path.join(os.getcwd(), '~$Контрагенты.xlsx')):
+                open_file_safe(os.path.join(os.getcwd(), 'Контрагенты.xlsx'))    
                 os.startfile('Контрагенты.xlsx')
                 # print(Fore.RED+'Файл "Контрагенты.xlsx" должен быть закрыт\n'+Fore.RESET)
                 continue
-            if os.path.exists(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', '~$Номенклатура.xlsx')):
-                open_file_safe(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Номенклатура.xlsx'))                    
+            if os.path.exists(os.path.join(os.getcwd(), '~$Номенклатура.xlsx')):
+                open_file_safe(os.path.join(os.getcwd(), 'Номенклатура.xlsx'))                    
                 # os.startfile('Номенклатура.xlsx')
                 print(Fore.RED+'Файл "Номенклатура.xlsx" должен быть закрыт\n'+Fore.RESET)
                 continue
-            if os.path.exists(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', '~$Для накладных.xlsx')):
-                open_file_safe(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Для накладных.xlsx'))          
+            if os.path.exists(os.path.join(os.getcwd(), '~$Для накладных.xlsx')):
+                open_file_safe(os.path.join(os.getcwd(), 'Для накладных.xlsx'))          
                 # os.startfile('Для накладных.xlsx')
                 print(Fore.RED+'Файл "Для накладных.xlsx" должен быть закрыт\n'+Fore.RESET)
                 continue
@@ -112,7 +112,7 @@ while True:
             else:
                 print(Fore.RED+f'{download_file_preparator_res[1]}\n'+Fore.RESET)
 
-            open_file_safe(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Для накладных.xlsx')) 
+            open_file_safe(os.path.join(os.getcwd(), 'Для накладных.xlsx')) 
             # os.startfile('Для накладных.xlsx')
             continue            
 
@@ -128,13 +128,13 @@ while True:
         elif choise == '3':
             print(Fore.YELLOW + 'Перемещаем в архив...' + Fore.RESET)
 
-            source_file_names = list(os.walk(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Исходник')))[0][2]
+            source_file_names = list(os.walk(os.path.join(os.getcwd(), 'Исходник')))[0][2]
 
             if len(source_file_names)==1:
                 source_file_name = source_file_names[0]
 
-                source_file_path = os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Исходник', source_file_name)
-                opened_source_file_path = os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Исходник', f'~${source_file_name}')
+                source_file_path = os.path.join(os.getcwd(), 'Исходник', source_file_name)
+                opened_source_file_path = os.path.join(os.getcwd(), 'Исходник', f'~${source_file_name}')
 
                 if os.path.exists(opened_source_file_path):
                     open_file_safe(source_file_path)                     
@@ -149,11 +149,11 @@ while True:
                 continue
 
         
-            if not os.path.exists(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Для накладных.xlsx')):
+            if not os.path.exists(os.path.join(os.getcwd(), 'Для накладных.xlsx')):
                 print(Fore.RED+'Файл "Номенклатура.xlsx" не существует\n'+Fore.RESET)
                 continue
-            if os.path.exists(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', '~$Для накладных.xlsx')):
-                open_file_safe(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Для накладных.xlsx')) 
+            if os.path.exists(os.path.join(os.getcwd(), '~$Для накладных.xlsx')):
+                open_file_safe(os.path.join(os.getcwd(), 'Для накладных.xlsx')) 
                 # os.startfile('Для накладных.xlsx')
                 print(Fore.RED+'Файл "Для накладных.xlsx" должен быть закрыт\n'+Fore.RESET)
                 continue
@@ -167,12 +167,12 @@ while True:
             
         elif choise == '4':
             print(Fore.YELLOW + 'Открываем список контрагентов...' + Fore.RESET)
-            open_file_safe(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Контрагенты.xlsx'))             
+            open_file_safe(os.path.join(os.getcwd(), 'Контрагенты.xlsx'))             
             # os.startfile('Контрагенты.xlsx')
             
         elif choise == '5':
             print(Fore.YELLOW + 'Открываем номенклатуру...' + Fore.RESET)
-            open_file_safe(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Номенклатура.xlsx'))             
+            open_file_safe(os.path.join(os.getcwd(), 'Номенклатура.xlsx'))             
             # os.startfile('Номенклатура.xlsx')
 
         elif choise == '6':

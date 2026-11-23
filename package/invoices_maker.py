@@ -14,7 +14,7 @@ with open(os.path.join(os.getcwd(), 'config.json'), 'r', encoding='utf-8') as f:
 
 def negative_weights_detector():
         
-        wb= load_workbook(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Для накладных.xlsx'))
+        wb= load_workbook(os.path.join(os.getcwd(), 'Для накладных.xlsx'))
         ws = wb.active
 
         for row_number in range(4, ws.max_row-1):
@@ -31,7 +31,7 @@ def invoice_creator():
         
         negative_weights_detector()
         
-        wb= load_workbook(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'Для накладных.xlsx'))
+        wb= load_workbook(os.path.join(os.getcwd(), 'Для накладных.xlsx'))
         ws = wb.active
         warehouseItems = []
         if ws.cell(column=1, row=3).value != 'Накладных:':

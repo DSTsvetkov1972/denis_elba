@@ -9,7 +9,7 @@ from package.logo import version
 
 
 def df_to_sqlite(df, table_name):
-    with sqlite3.connect(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'app.db')) as conn:
+    with sqlite3.connect(os.path.join(os.getcwd(), 'app.db')) as conn:
         df.to_sql(table_name, conn, if_exists='replace', index=False)
 
         
@@ -18,7 +18,7 @@ def get_contractor_id(name, operation):
         if operation in ['Закрытие смены', 'Аварийное закрытие партии']:
             return(True, operation)
         
-        with sqlite3.connect(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'app.db')) as conn:
+        with sqlite3.connect(os.path.join(os.getcwd(), 'app.db')) as conn:
             sql_res = pd.read_sql_query(f"SELECT * FROM contractors WHERE name='{name}'", conn)
             
             if not sql_res.empty:
@@ -31,7 +31,7 @@ def get_contractor_id(name, operation):
 
 def get_info_from_idFromName(idFromName):
     try:
-        with sqlite3.connect(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'app.db')) as conn:
+        with sqlite3.connect(os.path.join(os.getcwd(), 'app.db')) as conn:
             sql_res = pd.read_sql_query(f"SELECT * FROM contractors WHERE idFromName='{idFromName}'", conn)
 
             if sql_res.empty:
@@ -55,7 +55,7 @@ def get_info_from_idFromName(idFromName):
 
 def get_good_name(article, binded_company_name):
     try:
-        with sqlite3.connect(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'app.db')) as conn:
+        with sqlite3.connect(os.path.join(os.getcwd(), 'app.db')) as conn:
             sql_res = pd.read_sql_query(f"SELECT * FROM goods WHERE article='{article}' AND binded_company_name='{binded_company_name}'", conn)
             # print(sql_res)
             

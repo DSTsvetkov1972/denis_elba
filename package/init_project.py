@@ -11,12 +11,12 @@ init()
 print(Style.BRIGHT)
 print(logo_colored)
 
-if not os.path.exists(os.path.join(os.path.expanduser("~"), f'invoice_creator_{version}', 'Исходник')):
-    os.makedirs(os.path.join(os.path.expanduser("~"), f'invoice_creator_{version}', 'Исходник'))
+if not os.path.exists(os.path.join(os.getcwd(), 'Исходник')):
+    os.makedirs(os.path.join(os.getcwd(), 'Исходник'))
     print(Fore.GREEN+'Создана папка Исходник'+Fore.RESET)
     
-if not os.path.exists(os.path.join(os.path.expanduser("~"), f'invoice_creator_{version}', 'Архив')):
-    os.makedirs(os.path.join(os.path.expanduser("~"), f'invoice_creator_{version}', 'Архив'))
+if not os.path.exists(os.path.join(os.getcwd(), 'Архив')):
+    os.makedirs(os.path.join(os.getcwd(), 'Архив'))
     print(Fore.GREEN+'Создана папка Архив'+Fore.RESET)
 
 #if not os.path.exists(os.path.join(os.path.expanduser('~'), f'invoice_creator_{version}', 'app.db')):

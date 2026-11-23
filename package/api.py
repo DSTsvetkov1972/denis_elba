@@ -243,7 +243,7 @@ def get_company_contractors(COMPANY_INN, COMPANY_REQUISITES):
 def get_all_contractors():
     try:
         out_path = os.path.join(
-            os.path.expanduser('~'), f'invoice_creator_{version}', 'Контрагенты.xlsx'
+            os.getcwd(), 'Контрагенты.xlsx'
         )
         if os.path.exists(out_path):
             os.remove(out_path)
@@ -312,28 +312,7 @@ def create_invoice(binded_company_inn, payload):
     
     if response.status_code != 201:
         raise Exception(response.json())
-        
-
-    
-"""
-if __name__ == '__main__':
-    payload = {
-        "request": {},
-        "bankAccountId": BANK_ACCOUNT_ID,
-        "contractorId": "443a7b62-48ab-45a2-ba25-53adbf1edceb",
-        "consigneeId": "443a7b62-48ab-45a2-ba25-53adbf1edceb",
-        "date": "2026-05-31",
-        'warehouseItems': [
-            {'discount': None,
-             'ndsRate': None,
-             'price': 365,
-             'productName': 'Лук зеленый',
-             'quantity': 3.3,
-             'unitName': 'кг'}]
-    }
- 
-    create_invoice(payload)    
-"""    
+         
 
 if __name__ == '__main__':
     get_all_contractors()
