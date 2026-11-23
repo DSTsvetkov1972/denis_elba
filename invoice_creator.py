@@ -22,11 +22,11 @@ except Exception as e:
         sleep(2)
 
 
-trial = datetime(2026, 11, 30)
-if datetime.now()>trial:
-    print(Fore.RED, f'Программу можно было пользоваться без оплаты до {trial}', Fore.RESET)
-    while True:
-        continue
+# trial = datetime(2026, 11, 30)
+# if datetime.now()>trial:
+#    print(Fore.RED, f'Программу можно было пользоваться без оплаты до {trial}', Fore.RESET)
+#    while True:
+#        continue
 
 
 def open_file_safe(file_path):
