@@ -150,7 +150,7 @@ def get_company_goods(COMPANY_INN, COMPANY_REQUISITES):
 
 def get_all_goods():
     out_path = os.path.join(
-        os.path.expanduser('~'), f'invoice_creator_{version}', 'Номенклатура.xlsx'
+        os.getcwd(), 'Номенклатура.xlsx'
     )
     if os.path.exists(out_path):
         os.remove(out_path)
