@@ -123,6 +123,7 @@ def get_company_goods(COMPANY_INN, COMPANY_REQUISITES):
         offset = 0
         limit = 100
         while True:
+            print(Fore.BLACK + f'Для {COMPANY_NAME} получаем позиции номенклатуры с {offset} по {offset+limit}' + Fore.RESET)
             payload = {
                 "offset": offset,       
                 "limit": limit
@@ -146,18 +147,18 @@ def get_company_goods(COMPANY_INN, COMPANY_REQUISITES):
             
 
 
-def get_all_goods(max_workers: int = 8):
+def get_all_goods():
     out_path = os.path.join(
         os.path.expanduser('~'), f'invoice_creator_{version}', 'Номенклатура.xlsx'
     )
     if os.path.exists(out_path):
         os.remove(out_path)
 
-    print(Fore.BLACK + f'Выгружаем номенклатуру для {len(COMPANIES)} компаний (в {max_workers} потоков)' + Fore.RESET)
+    # print(Fore.BLACK + f'Выгружаем номенклатуру для {len(COMPANIES)} компаний (в {max_workers} потоков)' + Fore.RESET)
 
     results = {}
     try:
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        with ThreadPoolExecutor() as executor:
             future_to_inn = {
                 executor.submit(get_company_goods, inn, req): inn
                 for inn, req in COMPANIES.items()
@@ -168,9 +169,9 @@ def get_all_goods(max_workers: int = 8):
                 try:
                     df = future.result()
                     results[inn] = df
-                    print(Fore.BLACK + f'  ✓ Готово: {name} ({len(df)} строк)' + Fore.RESET)
+                    print(Fore.GREEN + '✓ ' + Fore.BLACK + f'Готово: {name} ({len(df)} строк)' + Fore.RESET)
                 except Exception as e:
-                    print(Fore.RED + f'  ✗ Ошибка для {name}: {e!r}' + Fore.RESET)
+                    print(Fore.RED + f'✗ Ошибка для {name}: {e!r}' + Fore.RESET)
                     results[inn] = None
 
         dfs = [df for df in results.values() if df is not None and not df.empty]
@@ -213,6 +214,7 @@ def get_company_contractors(COMPANY_INN, COMPANY_REQUISITES):
     offset = 0
     limit = 100
     while True:
+        print(Fore.BLACK + f'Для {COMPANY_NAME} получаем контрагентов с {offset} по {offset+limit}' + Fore.RESET)
         payload = {
             "offset": offset,       
             "limit": limit
@@ -238,7 +240,7 @@ def get_company_contractors(COMPANY_INN, COMPANY_REQUISITES):
 
 
 
-def get_all_contractors(max_workers: int = 8):
+def get_all_contractors():
     try:
         out_path = os.path.join(
             os.path.expanduser('~'), f'invoice_creator_{version}', 'Контрагенты.xlsx'
@@ -246,10 +248,10 @@ def get_all_contractors(max_workers: int = 8):
         if os.path.exists(out_path):
             os.remove(out_path)
 
-        print(Fore.BLACK + f'Выгружаем контрагентов для {len(COMPANIES)} компаний (в {max_workers} потоков)' + Fore.RESET)
+        # print(Fore.BLACK + f'Выгружаем контрагентов для {len(COMPANIES)} компаний (в {max_workers} потоков)' + Fore.RESET)
 
         results = {}
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        with ThreadPoolExecutor() as executor:
             future_to_inn = {
                 executor.submit(get_company_contractors, inn, req): inn
                 for inn, req in COMPANIES.items()
@@ -260,10 +262,10 @@ def get_all_contractors(max_workers: int = 8):
                 try:
                     df = future.result()
                     results[inn] = df
-                    print(Fore.BLACK + f'  ✓ Готово: {name} ({len(df)} строк)' + Fore.RESET)
+                    print(Fore.GREEN + '✓ ' + Fore.BLACK + f'Готово:{name} ({len(df)} строк)' + Fore.RESET)
                 except Exception as e:
                     # логируем, но не валим весь процесс — остальные компании уже качаются
-                    print(Fore.RED + f'  ✗ Ошибка для {name}: {e!r}' + Fore.RESET)
+                    print(Fore.RED + f'✗ Ошибка для {name}: {e!r}' + Fore.RESET)
                     results[inn] = None
 
         dfs = [df for df in results.values() if df is not None and not df.empty]
