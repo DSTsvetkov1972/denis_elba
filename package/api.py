@@ -10,6 +10,7 @@ from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Alignment, PatternFill
 from package.logo import version
+from pprint import pprint
 
 import json
 
@@ -276,6 +277,7 @@ def get_all_contractors():
         contractors_df.drop_duplicates(inplace=True)
         contractors_df = contractors_df.sort_values('name')
         contractors_df['idFromName'] = contractors_df['shortName'].apply(get_article_from_name)
+
         contractors_df.to_excel(out_path, index=None)
 
         excel_formater(
@@ -306,7 +308,6 @@ def create_invoice(binded_company_inn, payload):
         'Connection': 'close'
         }
     
-    payload = payload
     
     response = requests.post(url, headers=headers, json=payload)
     

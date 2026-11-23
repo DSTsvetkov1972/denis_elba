@@ -19,12 +19,12 @@ def get_contractor_id(name, operation):
             return(True, operation)
         
         with sqlite3.connect(os.path.join(os.getcwd(), 'app.db')) as conn:
-            sql_res = pd.read_sql_query(f"SELECT * FROM contractors WHERE name='{name}'", conn)
+            sql_res = pd.read_sql_query(f"SELECT * FROM contractors WHERE name='{name}' AND idFromName IS NOT NULL AND idFromName<>''", conn)
             
             if not sql_res.empty:
                 return(True, sql_res['id'].iloc[0])
             else:
-                return (False, f'Контрагент "{name}" не найден')
+                return (False, f'Контрагент "{name}" не найден или не сопоставлен компании')
     except Exception as e:
         return(False, f'get_contractor_id: {repr(e)}')
             
