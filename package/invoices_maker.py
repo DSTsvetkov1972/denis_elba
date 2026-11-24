@@ -2,6 +2,7 @@ from openpyxl import load_workbook
 import os, sys
 sys.path.append(os.getcwd())
 from pprint import pprint
+import yaml
 
 import json
 from package.api import create_invoice
@@ -9,8 +10,8 @@ from package.api import create_invoice
 from datetime import datetime
 from package.logo import version
 
-with open(os.path.join(os.getcwd(), 'config.json'), 'r', encoding='utf-8') as f:
-    COMPANIES = json.load(f)['COMPANIES']
+with open(os.path.join(os.getcwd(), 'config.yml'), 'r', encoding='utf-8') as f:
+    COMPANIES = yaml.safe_load(f)['COMPANIES']
 
 def negative_weights_detector():
         
@@ -107,4 +108,4 @@ def invoice_creator():
 
 if __name__ == '__main__':
     # invoice_creator()
-    invoice_creator()
+    pass

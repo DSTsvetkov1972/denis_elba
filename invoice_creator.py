@@ -6,7 +6,8 @@ from time import sleep
 from datetime import datetime
     
 try:    
-    from package import init_project
+    from package.init_project import COMPANIES
+    
     from package.logo import version
 
     from package.preparator import check_source_folder, download_file_preparator
@@ -14,10 +15,12 @@ try:
     from package.api import get_all_contractors, get_all_goods
     from package.invoices_maker import invoice_creator
     from package.confirm_download import confirm
+
 except Exception as e:
     print(Fore.RED + 'Ошибка инициализации программы.\n' +
-          'Проверьте, что в папке с исполняемым файлом есть валидный файл config.json' + Fore.RESET)
-    print(str(e))
+          'Проверьте, что в папке с исполняемым файлом есть валидный файл config.yml' + Fore.RESET)
+    print(f'{e!r}')
+    
     while True:
         sleep(2)
 
@@ -31,9 +34,9 @@ except Exception as e:
 
 def open_file_safe(file_path):
     """Безопасное открытие файла на разных ОС"""
-    if not os.path.exists(file_path):
-        print(f"Ошибка: файл не найден - {file_path}")
-        return False
+    #if not os.path.exists(file_path):
+    #    print(f"Ошибка: файл не найден - {file_path}")
+    #    return False
     
     try:
         if sys.platform == 'win32':

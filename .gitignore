@@ -4,4 +4,4 @@ output/
 __pycache__
 app.db
 */__pycache__/
-config.json
+config.*

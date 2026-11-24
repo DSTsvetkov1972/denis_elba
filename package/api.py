@@ -1,10 +1,11 @@
 
-import os, sys, shutil
+import os, sys
 sys.path.append(os.getcwd())
+import yaml
 
 import requests
 import pandas as pd
-from colorama import init, Fore
+from colorama import Fore
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
@@ -12,10 +13,8 @@ from openpyxl.styles import Font, Alignment, PatternFill
 from package.logo import version
 from pprint import pprint
 
-import json
-
-with open(os.path.join(os.getcwd(), 'config.json'), 'r', encoding='utf-8') as f:
-    COMPANIES = json.load(f)['COMPANIES']
+with open(os.path.join(os.getcwd(), 'config.yml'), 'r', encoding='utf-8') as f:
+    COMPANIES = yaml.safe_load(f)['COMPANIES']
 
 session = requests.Session()
 session.keep_alive = False  # отключаем постоянные соединени
