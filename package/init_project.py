@@ -30,8 +30,6 @@ if not os.path.exists(os.path.join(os.getcwd(), 'Архив')):
 db_exists = os.path.exists(os.path.join(os.getcwd(), 'app.db'))
 
 if not db_exists or DOWNLOAD_COUNTERPARTIES_ON_START:
-    print(Fore.YELLOW + 'Загружаем контрагентов...' + Fore.RESET)
-
     all_contractors_df = get_all_contractors()
 
     if all_contractors_df[0]:
@@ -42,7 +40,6 @@ else:
     print(Fore.YELLOW + 'Будем использовать базу контрагентов загруженную ранее...' + Fore.RESET)        
 
 if not db_exists or DOWNLOAD_GOODS_ON_START:
-    print(Fore.YELLOW + 'Загружаем номенклатуру...' + Fore.RESET)             
     all_goods_df = get_all_goods()
 
     if all_goods_df[0]:

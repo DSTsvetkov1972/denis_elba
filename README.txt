@@ -19,3 +19,7 @@ INN: 231523079650
 API: 2865ffce-2a3c-45eb-87b6-bca5a1cb12ad
 ID: dcfcf060-be4b-43f4-8fe9-9e432714d3db
 BANK_ID: e9371582-b18d-41ab-b7c8-dd42418aff34
+
+
+@id511201035090_bot
+
